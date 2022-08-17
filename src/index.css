@@ -1,0 +1,46 @@
+.react-flow__node-start {
+  font-family: Roboto;
+  font-size: 15px;
+  background-color: green;
+  width: 60px;
+  height: 60px;
+  text-align: center;
+  color: white;
+  border-radius: 5px 5px;
+  box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px,
+    rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+}
+.react-flow__node-ivrMenu {
+  font-family: Roboto;
+  font-size: 12px;
+  background-color: white;
+  min-width: 500px;
+  min-height: 80px;
+  border-radius: 5px 5px;
+  box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px,
+    rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+}
+.react-flow__node-output {
+  font-family: Roboto;
+  font-size: 12px;
+  background-color: white;
+  min-height: 500;
+  min-width: 500;
+  border-radius: 5px 5px;
+  box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px,
+    rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+}
+.react-flow__node-input {
+  font-family: Roboto;
+  font-size: 12px;
+  background-color: white;
+  min-height: 500;
+  min-width: 500;
+  border-radius: 5px 5px;
+  box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px,
+    rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+}
+.react-flow__handle {
+  font-family: Roboto;
+  font-size: 12px;
+}
