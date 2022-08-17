@@ -19,48 +19,56 @@ const nodeTypes = {
 };
 
 function App() {
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  //call back that gets called from Nodes
+  const onChange = (event) => {
+    setNodes((nds) =>
+      nds.map((node) => {
+        switch (node.type) {
+          case "ivrMenu":
+            return node;
+          default:
+            return node;
+        }
+      })
+    );
+  };
+
+  //nodes state that contains out nodes and their data
+  const [nodes, setNodes, onNodesChange] = useNodesState([
+    {
+      id: "1",
+      type: "start",
+      position: { x: 0, y: 0 },
+      draggable: false,
+      selectable: false,
+    },
+    {
+      id: "2",
+      type: "ivrMenu",
+      data: {
+        onChange: onChange,
+      },
+      dragHandle: ".custom-drag-handle",
+      position: { x: 300, y: 0 },
+    },
+  ]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   useEffect(() => {
-    const onChange = (event) => {
-      setNodes((nds) =>
-        nds.map((node) => {
-          switch (node.type) {
-            case "ivrMenu":
-              return node;
-            default:
-              return node;
-          }
-        })
-      );
-    };
-
-    setNodes([
-      {
-        id: "1",
-        type: "start",
-        position: { x: 0, y: 0 },
-        draggable: false,
-        selectable: false,
-      },
-      {
-        id: "2",
-        type: "ivrMenu",
-        data: {
-          onChange: onChange,
-        },
-        position: { x: 300, y: 50 },
-      },
-    ]);
-
     setEdges([]);
   }, []);
 
   const onConnect = useCallback(
     (params) =>
       setEdges((eds) =>
-        addEdge({ ...params, animated: true, style: { stroke: "#fff" } }, eds)
+        addEdge(
+          {
+            ...params,
+            animated: true,
+            markerEnd: { type: "arrow", color: "#000000" },
+          },
+          eds
+        )
       ),
     []
   );

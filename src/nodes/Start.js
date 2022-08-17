@@ -41,7 +41,6 @@ export default memo(({ data, isConnectable }) => {
         onConnect={(params) => console.log("handle onConnect", params)}
         isConnectable={isConnectable}
       />
-      <p>START</p>
     </React.Fragment>
   );
 });
