@@ -3,22 +3,25 @@ import {
   AccordionDetails,
   Box,
   Grid,
-  TextField,
   Typography,
   AccordionSummary,
   Tooltip,
   Button,
-  InputAdornment,
-  OutlinedInput,
-  FormControl,
-  InputLabel,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogActions,
+  DialogContent,
 } from "@mui/material";
 import React, { memo, useEffect, useState } from "react";
 
+import DeleteIcon from "@mui/icons-material/Delete";
 import { Handle } from "react-flow-renderer";
 import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
 import OpenWithIcon from "@mui/icons-material/OpenWith";
 import { Stack } from "@mui/system";
+import TextFieldWithConfirmationButton from "../components/TextFieldWithConfirmationButton";
+import TextField from "../components/TextField";
 
 const handleWrapperStyle = {
   display: "flex",
@@ -37,16 +40,53 @@ const handleStyle = {
   color: "red",
 };
 
-export default memo(({ data, isConnectable }) => {
+export default memo(({ data, id }) => {
+  const [expandedConfig, setExpandedConfig] = useState(false);
   const [expanded, setExpanded] = useState("");
-  const [numberOfPorts, setNumberOfPorts] = useState(0);
-  useEffect(() => {
-    console.log(data);
-    console.log(isConnectable);
-  }, [data]);
+  const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
+
+  const [name, setName] = useState(data.name);
+  const [noOfOutput, setNoOfOutput] = useState(0);
+  const [timeout, setTimeout] = useState(0);
+  const [interDigitTimeout, setInterDigitTimeout] = useState(0);
+  const [maxFailure, setMaxFailure] = useState(0);
+  const [digitLength, setDigitLength] = useState(0);
 
   return (
     <React.Fragment>
+      <Dialog
+        open={openDeleteConfirmation}
+        onClose={() => {
+          setOpenDeleteConfirmation(false);
+        }}
+      >
+        <DialogTitle>Delete Confirmation</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete IVR Menu with the ID {id} ?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="text"
+            onClick={() => {
+              data.onNodeDelete(id);
+              setOpenDeleteConfirmation(false);
+            }}
+          >
+            Yes
+          </Button>
+          <Button
+            variant="text"
+            color="secondary"
+            onClick={() => {
+              setOpenDeleteConfirmation(false);
+            }}
+          >
+            No
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Box
         ml={2}
         mr={2}
@@ -60,20 +100,44 @@ export default memo(({ data, isConnectable }) => {
         }}
       >
         <Typography style={{ float: "left" }}>Menu</Typography>
-        <OpenWithIcon fontSize="medium" className="custom-drag-handle" />
+        <Box
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "nowrap",
+            justifyContent: "flex-end",
+            alignItems: "baseline",
+          }}
+        >
+          <div className="custom-drag-handle">
+            <OpenWithIcon fontSize="medium" />
+          </div>
+
+          <IconButton
+            onClick={() => {
+              setOpenDeleteConfirmation(true);
+            }}
+          >
+            <DeleteIcon fontSize="medium" style={{ color: "#000000" }} />
+          </IconButton>
+        </Box>
       </Box>
       <Box>
         <Box pl={2} pr={2} mb={2}>
           <Accordion
             style={{ marginBottom: 5 }}
             TransitionProps={{ unmountOnExit: true }}
+            expanded={expandedConfig}
+            onChange={() => {
+              setExpandedConfig(!expandedConfig);
+            }}
           >
             <AccordionSummary
               expandIcon={
                 <ExpandCircleDownIcon style={{ color: "darkBlue" }} />
               }
             >
-              Configuration
+              <Typography>Configuration</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Accordion
@@ -90,59 +154,78 @@ export default memo(({ data, isConnectable }) => {
                     <ExpandCircleDownIcon style={{ color: "darkBlue" }} />
                   }
                 >
-                  Menu Configuration
+                  <Typography>Menu Configuration</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                  <Stack spacing={1}>
-                    <FormControl variant="outlined" fullWidth>
-                      <InputLabel>Name</InputLabel>
-                      <OutlinedInput
-                        label={"number of output ports"}
-                        fullWidth
-                        endAdornment={
-                          <InputAdornment position="end">
-                            <Button size={"small"} variant="text">
-                              Confirm
-                            </Button>
-                          </InputAdornment>
-                        }
-                      />
-                    </FormControl>
-                    <FormControl variant="outlined" fullWidth>
-                      <InputLabel>Number of output ports</InputLabel>
-                      <OutlinedInput
-                        value={numberOfPorts}
-                        onChange={(e) => {
-                          if (!isNaN(e.target.value.trim()))
-                            setNumberOfPorts(e.target.value.trim());
-                        }}
-                        label={"number of output ports"}
-                        fullWidth
-                        endAdornment={
-                          <InputAdornment position="end">
-                            <Button size={"small"} variant="text">
-                              Confirm
-                            </Button>
-                          </InputAdornment>
-                        }
-                      />
-                    </FormControl>
-                    <TextField label={"timeout"} size={"small"} fullWidth />
-                    <TextField
-                      label={"inter-digit-timeout"}
-                      size={"small"}
-                      fullWidth
+                  <Stack spacing={2}>
+                    <TextFieldWithConfirmationButton
+                      id={"a" + id}
+                      type="text"
+                      label="Name"
+                      value={name}
+                      onChange={(value) => {
+                        setName(value);
+                      }}
+                      error={data.name !== name}
+                      onClick={() => {
+                        const temp = data;
+                        data.saveChanges(data);
+                      }}
                     />
-                    <TextField label={"max-failure"} size={"small"} fullWidth />
-                    <TextField
-                      label={"digit-length"}
-                      size={"small"}
-                      fullWidth
+                    <TextFieldWithConfirmationButton
+                      id={"b" + id}
+                      label="Number of output ports"
+                      type="number"
+                      value={noOfOutput}
+                      onChange={(value) => {
+                        setNoOfOutput(value);
+                      }}
+                      error={data.noOfOutput !== noOfOutput}
                     />
+                    <TextFieldWithConfirmationButton
+                      id={"c" + id}
+                      label="timeout"
+                      type="number"
+                      value={timeout}
+                      onChange={(value) => {
+                        setTimeout(value);
+                      }}
+                      error={timeout !== data.timeout}
+                    />
+                    <TextFieldWithConfirmationButton
+                      id={"d" + id}
+                      label="inter-digit-timeout"
+                      type="number"
+                      value={interDigitTimeout}
+                      onChange={(value) => {
+                        setInterDigitTimeout(Number(value));
+                      }}
+                      error={interDigitTimeout !== data.interDigitTimeout}
+                    />
+                    <TextFieldWithConfirmationButton
+                      id={"e" + id}
+                      label="max-failure"
+                      type="number"
+                      value={maxFailure}
+                      onChange={(value) => {
+                        setMaxFailure(value);
+                      }}
+                      error={maxFailure !== data.maxFailure}
+                    />
+                    <TextFieldWithConfirmationButton
+                      id={"f" + id}
+                      label="digit-length"
+                      type="number"
+                      value={digitLength}
+                      onChange={(value) => {
+                        setDigitLength(value);
+                      }}
+                      error={digitLength !== data.digitLength}
+                    />
+                    <Button>SAVE ALL</Button>
                   </Stack>
                 </AccordionDetails>
               </Accordion>
-
               <Accordion
                 elevation={1}
                 TransitionProps={{ unmountOnExit: true }}
@@ -157,7 +240,7 @@ export default memo(({ data, isConnectable }) => {
                     <ExpandCircleDownIcon style={{ color: "darkBlue" }} />
                   }
                 >
-                  Audio Configuration
+                  <Typography>Audio Configuration</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                   <Grid container direction={"row"} spacing={1}>
@@ -199,18 +282,14 @@ export default memo(({ data, isConnectable }) => {
           <Handle
             type="target"
             position="left"
-            style={{ background: "green" }}
-            isConnectable={isConnectable}
-          >
-            <div
-              style={{
-                float: "left",
-                position: "relative",
-                transform: "translate(-70px, -11x)",
-                pointerEvents: "none",
-              }}
-            ></div>
-          </Handle>
+            style={{
+              background: "green",
+              height: "15px",
+              width: "15px",
+              border: "none",
+              transform: "translate(-11px,0px)",
+            }}
+          ></Handle>
         </Tooltip>
         {/* <div style={handleWrapperStyle}>
         {data.output.map((handle) => (

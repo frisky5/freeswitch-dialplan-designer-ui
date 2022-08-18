@@ -36,10 +36,17 @@ export default memo(({ data, isConnectable }) => {
   return (
     <React.Fragment>
       <Handle
+        id={data.handleId}
         type="source"
         position="right"
         onConnect={(params) => console.log("handle onConnect", params)}
         isConnectable={isConnectable}
+        style={{
+          background: "blue",
+          height: "10px",
+          width: "10px",
+          transform: "translate(5px,-6px)",
+        }}
       />
     </React.Fragment>
   );

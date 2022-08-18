@@ -1,96 +1,148 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import ReactFlow, {
+  ReactFlowProvider,
   useNodesState,
   useEdgesState,
   addEdge,
   MiniMap,
   Controls,
 } from "react-flow-renderer";
+import { v4 as uuidv4 } from "uuid";
 
 import IvrMenu from "./nodes/IvrMenu";
 import Start from "./nodes/Start";
 import "./index.css";
+import NodesSidebar from "./components/NodesSidebar";
+import { CssBaseline } from "@mui/material";
 
-const connectionLineStyle = { stroke: "#000000" };
-const snapGrid = [1, 1];
 const nodeTypes = {
   ivrMenu: IvrMenu,
   start: Start,
 };
 
 function App() {
-  //call back that gets called from Nodes
-  const onChange = (event) => {
-    setNodes((nds) =>
-      nds.map((node) => {
-        switch (node.type) {
-          case "ivrMenu":
-            return node;
-          default:
-            return node;
-        }
-      })
-    );
-  };
-
-  //nodes state that contains out nodes and their data
+  const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([
     {
-      id: "1",
+      id: uuidv4(),
       type: "start",
-      position: { x: 0, y: 0 },
       draggable: false,
-      selectable: false,
-    },
-    {
-      id: "2",
-      type: "ivrMenu",
-      data: {
-        onChange: onChange,
-      },
-      dragHandle: ".custom-drag-handle",
-      position: { x: 300, y: 0 },
+      data: { handleId: uuidv4() },
+      position: { x: 0, y: 0 },
     },
   ]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
-  useEffect(() => {
-    setEdges([]);
+  const onDragOver = useCallback((event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
   }, []);
+
+  const onDrop = useCallback(
+    (event) => {
+      event.preventDefault();
+
+      const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+      const type = event.dataTransfer.getData("application/reactflow");
+
+      // check if the dropped element is valid
+      if (type == null) {
+        return;
+      }
+      const position = reactFlowInstance.project({
+        x: event.clientX - reactFlowBounds.left,
+        y: event.clientY - reactFlowBounds.top,
+      });
+
+      switch (type) {
+        case "ivrMenu":
+          setNodes((nds) =>
+            nds.concat({
+              id: uuidv4(),
+              type,
+              position,
+              data: {
+                name: "",
+                noOfOutput: 0,
+                timeout: 0,
+                interDigitTimeout: 0,
+                maxFailure: 0,
+                digitLength: 0,
+                onNodeDelete: onNodeDelete,
+                saveChanges: saveChanges,
+              },
+              dragHandle: ".custom-drag-handle",
+            })
+          );
+          break;
+      }
+    },
+    [reactFlowInstance]
+  );
 
   const onConnect = useCallback(
     (params) =>
       setEdges((eds) =>
         addEdge(
           {
+            id: uuidv4(),
             ...params,
-            animated: true,
-            markerEnd: { type: "arrow", color: "#000000" },
+            type: "smoothstep",
+            markerEnd: {
+              height: "25px",
+              width: "25px",
+              type: "arrowclosed",
+              color: "red",
+            },
           },
           eds
         )
       ),
     []
   );
+
+  const onNodeDelete = (id) => {
+    setNodes((nds) => nds.filter((node) => node.id !== id));
+  };
+  const saveChanges = (data) => {
+    console.log("saving this : ", data);
+  };
+
   return (
-    <div style={{ width: "100vw", height: "100vh" }}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        style={{ background: "#FFFFFF" }}
-        nodeTypes={nodeTypes}
-        connectionLineStyle={connectionLineStyle}
-        snapToGrid={true}
-        snapGrid={snapGrid}
-        defaultZoom={1.5}
-        fitView
-        attributionPosition="bottom-left"
-      >
-        <Controls />
-      </ReactFlow>
+    <div className="dndflow">
+      <CssBaseline />
+      <ReactFlowProvider>
+        <div
+          className="reactflow-wrapper"
+          ref={reactFlowWrapper}
+          style={{ height: "99vh", width: "99vw" }}
+        >
+          <ReactFlow
+            nodeTypes={nodeTypes}
+            // connectionLineStyle={connectionLineStyle}
+            // snapToGrid={true}
+            // snapGrid={snapGrid}
+            // defaultZoom={1.5}
+            // onDrop={onDrop}
+            // onDragOver={onDragOver}
+            // fitView
+            // attributionPosition="bottom-left"
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onInit={setReactFlowInstance}
+            onDrop={onDrop}
+            onDragOver={onDragOver}
+            defaultZoom={1}
+          >
+            <Controls />
+          </ReactFlow>
+        </div>
+        <NodesSidebar />
+      </ReactFlowProvider>
     </div>
   );
 }
