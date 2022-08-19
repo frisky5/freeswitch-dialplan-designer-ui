@@ -14,13 +14,22 @@ import Start from "./nodes/Start";
 import "./index.css";
 import NodesSidebar from "./components/NodesSidebar";
 import { CssBaseline } from "@mui/material";
+import DeleteConfirmation from "./components/DeleteConfirmation";
+import Extension from "./nodes/Extension";
+import Condition from "./nodes/Condition";
+import Action from "./nodes/Action";
 
 const nodeTypes = {
   ivrMenu: IvrMenu,
   start: Start,
+  extension: Extension,
+  condition: Condition,
+  action: Action,
 };
 
 function App() {
+  const [deleteTarget, setDeleteTarget] = useState("");
+  const [openDeletConfirmation, setOpenDeleteConfirmation] = useState(false);
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([
     {
@@ -56,6 +65,51 @@ function App() {
       });
 
       switch (type) {
+        case "extension":
+          setNodes((nds) =>
+            nds.concat({
+              id: uuidv4(),
+              type,
+              position,
+              data: {
+                name: "",
+                askDeleteNode: askDeleteNode,
+                saveChanges: saveChanges,
+              },
+              dragHandle: ".custom-drag-handle",
+            })
+          );
+          break;
+        case "condition":
+          setNodes((nds) =>
+            nds.concat({
+              id: uuidv4(),
+              type,
+              position,
+              data: {
+                name: "",
+                askDeleteNode: askDeleteNode,
+                saveChanges: saveChanges,
+              },
+              dragHandle: ".custom-drag-handle",
+            })
+          );
+          break;
+        case "action":
+          setNodes((nds) =>
+            nds.concat({
+              id: uuidv4(),
+              type,
+              position,
+              data: {
+                name: "",
+                askDeleteNode: askDeleteNode,
+                saveChanges: saveChanges,
+              },
+              dragHandle: ".custom-drag-handle",
+            })
+          );
+          break;
         case "ivrMenu":
           setNodes((nds) =>
             nds.concat({
@@ -69,7 +123,7 @@ function App() {
                 interDigitTimeout: 0,
                 maxFailure: 0,
                 digitLength: 0,
-                onNodeDelete: onNodeDelete,
+                askDeleteNode: askDeleteNode,
                 saveChanges: saveChanges,
               },
               dragHandle: ".custom-drag-handle",
@@ -81,30 +135,37 @@ function App() {
     [reactFlowInstance]
   );
 
-  const onConnect = useCallback(
-    (params) =>
-      setEdges((eds) =>
-        addEdge(
-          {
-            id: uuidv4(),
-            ...params,
-            type: "smoothstep",
-            markerEnd: {
-              height: "25px",
-              width: "25px",
-              type: "arrowclosed",
-              color: "red",
-            },
+  const onConnect = useCallback((params) => {
+    console.log(params);
+    setEdges((eds) =>
+      addEdge(
+        {
+          id: uuidv4(),
+          ...params,
+          type: "smoothstep",
+          markerEnd: {
+            height: "30px",
+            width: "30px",
+            type: "arrowclosed",
+            color: "black",
           },
-          eds
-        )
-      ),
-    []
-  );
+        },
+        eds
+      )
+    );
+  }, []);
+
+  //Node deletion
+
+  const askDeleteNode = (nodeId) => {
+    setDeleteTarget(nodeId);
+    setOpenDeleteConfirmation(true);
+  };
 
   const onNodeDelete = (id) => {
     setNodes((nds) => nds.filter((node) => node.id !== id));
   };
+
   const saveChanges = (data) => {
     console.log("saving this : ", data);
   };
@@ -112,6 +173,19 @@ function App() {
   return (
     <div className="dndflow">
       <CssBaseline />
+      <DeleteConfirmation
+        id={deleteTarget}
+        open={openDeletConfirmation}
+        yes={() => {
+          setOpenDeleteConfirmation(false);
+          onNodeDelete(deleteTarget);
+          setDeleteTarget("");
+        }}
+        no={() => {
+          setOpenDeleteConfirmation(false);
+          setDeleteTarget("");
+        }}
+      />
       <ReactFlowProvider>
         <div
           className="reactflow-wrapper"
@@ -120,14 +194,6 @@ function App() {
         >
           <ReactFlow
             nodeTypes={nodeTypes}
-            // connectionLineStyle={connectionLineStyle}
-            // snapToGrid={true}
-            // snapGrid={snapGrid}
-            // defaultZoom={1.5}
-            // onDrop={onDrop}
-            // onDragOver={onDragOver}
-            // fitView
-            // attributionPosition="bottom-left"
             nodes={nodes}
             edges={edges}
             onNodesChange={onNodesChange}

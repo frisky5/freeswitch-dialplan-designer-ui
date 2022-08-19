@@ -8,20 +8,18 @@ import {
   Tooltip,
   Button,
   IconButton,
-  Dialog,
-  DialogTitle,
-  DialogActions,
-  DialogContent,
 } from "@mui/material";
 import React, { memo, useEffect, useState } from "react";
-
-import DeleteIcon from "@mui/icons-material/Delete";
-import { Handle } from "react-flow-renderer";
-import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
-import OpenWithIcon from "@mui/icons-material/OpenWith";
+import PanToolIcon from "@mui/icons-material/PanTool";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import GenericAccordion from "../components/GenericAccordion";
 import { Stack } from "@mui/system";
 import TextFieldWithConfirmationButton from "../components/TextFieldWithConfirmationButton";
 import TextField from "../components/TextField";
+
+import { v4 as uuidv4 } from "uuid";
+import { Handle } from "react-flow-renderer";
+import { useUpdateNodeInternals } from "react-flow-renderer";
 
 const handleWrapperStyle = {
   display: "flex",
@@ -31,6 +29,8 @@ const handleWrapperStyle = {
   top: 0,
   flexDirection: "column",
   justifyContent: "space-between",
+  paddingTop: "40px",
+  paddingBottom: "40px",
 };
 
 const handleStyle = {
@@ -40,256 +40,172 @@ const handleStyle = {
   color: "red",
 };
 
+const inputHandleId = uuidv4();
 export default memo(({ data, id }) => {
   const [expandedConfig, setExpandedConfig] = useState(false);
   const [expanded, setExpanded] = useState("");
-  const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
-
   const [name, setName] = useState(data.name);
   const [noOfOutput, setNoOfOutput] = useState(0);
   const [timeout, setTimeout] = useState(0);
   const [interDigitTimeout, setInterDigitTimeout] = useState(0);
   const [maxFailure, setMaxFailure] = useState(0);
   const [digitLength, setDigitLength] = useState(0);
+  const updateNodeInternals = useUpdateNodeInternals();
+
+  useEffect(() => {
+    updateNodeInternals(id);
+  }, []);
 
   return (
     <React.Fragment>
-      <Dialog
-        open={openDeleteConfirmation}
-        onClose={() => {
-          setOpenDeleteConfirmation(false);
-        }}
-      >
-        <DialogTitle>Delete Confirmation</DialogTitle>
-        <DialogContent>
-          <Typography>
-            Are you sure you want to delete IVR Menu with the ID {id} ?
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant="text"
-            onClick={() => {
-              data.onNodeDelete(id);
-              setOpenDeleteConfirmation(false);
-            }}
-          >
-            Yes
-          </Button>
-          <Button
-            variant="text"
-            color="secondary"
-            onClick={() => {
-              setOpenDeleteConfirmation(false);
-            }}
-          >
-            No
-          </Button>
-        </DialogActions>
-      </Dialog>
       <Box
-        ml={2}
-        mr={2}
-        mt={1}
         mb={1}
+        className="custom-drag-handle"
         style={{
           display: "flex",
           flexDirection: "row",
           flexWrap: "nowrap",
+          width: "100%",
           justifyContent: "space-between",
+          alignItems: "flex-start",
+          borderBottom: "solid",
+          borderWidth: "1px",
         }}
       >
-        <Typography style={{ float: "left" }}>Menu</Typography>
-        <Box
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "nowrap",
-            justifyContent: "flex-end",
-            alignItems: "baseline",
+        <Typography style={{ marginTop: "5px", marginLeft: "15px" }}>
+          Menu
+        </Typography>
+        <IconButton
+          size="small"
+          style={{ marginRight: "20px" }}
+          onClick={() => {
+            data.askDeleteNode(id);
           }}
         >
-          <div className="custom-drag-handle">
-            <OpenWithIcon fontSize="medium" />
-          </div>
-
-          <IconButton
-            onClick={() => {
-              setOpenDeleteConfirmation(true);
-            }}
-          >
-            <DeleteIcon fontSize="medium" style={{ color: "#000000" }} />
-          </IconButton>
-        </Box>
+          <DeleteOutlineIcon fontSize="medium" />
+        </IconButton>
       </Box>
       <Box>
         <Box pl={2} pr={2} mb={2}>
-          <Accordion
-            style={{ marginBottom: 5 }}
-            TransitionProps={{ unmountOnExit: true }}
+          <GenericAccordion
             expanded={expandedConfig}
             onChange={() => {
               setExpandedConfig(!expandedConfig);
             }}
+            title={"Configuration"}
           >
-            <AccordionSummary
-              expandIcon={
-                <ExpandCircleDownIcon style={{ color: "darkBlue" }} />
-              }
+            <GenericAccordion
+              expanded={expanded === "menuConfig"}
+              onChange={() => {
+                if (expanded !== "menuConfig") setExpanded("menuConfig");
+                else setExpanded(false);
+              }}
+              title={"Menu Configuration"}
             >
-              <Typography>Configuration</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Accordion
-                elevation={1}
-                TransitionProps={{ unmountOnExit: true }}
-                expanded={expanded === "menuConfig"}
-                onChange={() => {
-                  if (expanded !== "menuConfig") setExpanded("menuConfig");
-                  else setExpanded(false);
-                }}
-              >
-                <AccordionSummary
-                  expandIcon={
-                    <ExpandCircleDownIcon style={{ color: "darkBlue" }} />
-                  }
-                >
-                  <Typography>Menu Configuration</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Stack spacing={2}>
-                    <TextFieldWithConfirmationButton
-                      id={"a" + id}
-                      type="text"
-                      label="Name"
-                      value={name}
-                      onChange={(value) => {
-                        setName(value);
-                      }}
-                      error={data.name !== name}
-                      onClick={() => {
-                        const temp = data;
-                        data.saveChanges(data);
-                      }}
-                    />
-                    <TextFieldWithConfirmationButton
-                      id={"b" + id}
-                      label="Number of output ports"
-                      type="number"
-                      value={noOfOutput}
-                      onChange={(value) => {
-                        setNoOfOutput(value);
-                      }}
-                      error={data.noOfOutput !== noOfOutput}
-                    />
-                    <TextFieldWithConfirmationButton
-                      id={"c" + id}
-                      label="timeout"
-                      type="number"
-                      value={timeout}
-                      onChange={(value) => {
-                        setTimeout(value);
-                      }}
-                      error={timeout !== data.timeout}
-                    />
-                    <TextFieldWithConfirmationButton
-                      id={"d" + id}
-                      label="inter-digit-timeout"
-                      type="number"
-                      value={interDigitTimeout}
-                      onChange={(value) => {
-                        setInterDigitTimeout(Number(value));
-                      }}
-                      error={interDigitTimeout !== data.interDigitTimeout}
-                    />
-                    <TextFieldWithConfirmationButton
-                      id={"e" + id}
-                      label="max-failure"
-                      type="number"
-                      value={maxFailure}
-                      onChange={(value) => {
-                        setMaxFailure(value);
-                      }}
-                      error={maxFailure !== data.maxFailure}
-                    />
-                    <TextFieldWithConfirmationButton
-                      id={"f" + id}
-                      label="digit-length"
-                      type="number"
-                      value={digitLength}
-                      onChange={(value) => {
-                        setDigitLength(value);
-                      }}
-                      error={digitLength !== data.digitLength}
-                    />
-                    <Button>SAVE ALL</Button>
-                  </Stack>
-                </AccordionDetails>
-              </Accordion>
-              <Accordion
-                elevation={1}
-                TransitionProps={{ unmountOnExit: true }}
-                expanded={expanded === "audioConfig"}
-                onChange={() => {
-                  if (expanded !== "audioConfig") setExpanded("audioConfig");
-                  else setExpanded(false);
-                }}
-              >
-                <AccordionSummary
-                  expandIcon={
-                    <ExpandCircleDownIcon style={{ color: "darkBlue" }} />
-                  }
-                >
-                  <Typography>Audio Configuration</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Grid container direction={"row"} spacing={1}>
-                    <Grid item xs={12}>
-                      <TextField
-                        label={"greet-long"}
-                        size={"small"}
-                        fullWidth
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        label={"gree-short"}
-                        size={"small"}
-                        fullWidth
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        label={"invalid-sound"}
-                        size={"small"}
-                        fullWidth
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        label={"exit-sound"}
-                        size={"small"}
-                        fullWidth
-                      />
-                    </Grid>
-                  </Grid>
-                </AccordionDetails>
-              </Accordion>
-            </AccordionDetails>
-          </Accordion>
+              <Stack spacing={2}>
+                <TextFieldWithConfirmationButton
+                  id={"a" + id}
+                  type="text"
+                  label="Name"
+                  value={name}
+                  onChange={(value) => {
+                    setName(value);
+                  }}
+                  error={data.name !== name}
+                  onClick={() => {
+                    const temp = data;
+                    data.saveChanges(data);
+                  }}
+                />
+                <TextFieldWithConfirmationButton
+                  id={"b" + id}
+                  label="Number of output ports"
+                  type="number"
+                  value={noOfOutput}
+                  onChange={(value) => {
+                    setNoOfOutput(value);
+                  }}
+                  error={data.noOfOutput !== noOfOutput}
+                />
+                <TextFieldWithConfirmationButton
+                  id={"c" + id}
+                  label="timeout"
+                  type="number"
+                  value={timeout}
+                  onChange={(value) => {
+                    setTimeout(value);
+                  }}
+                  error={timeout !== data.timeout}
+                />
+                <TextFieldWithConfirmationButton
+                  id={"d" + id}
+                  label="inter-digit-timeout"
+                  type="number"
+                  value={interDigitTimeout}
+                  onChange={(value) => {
+                    setInterDigitTimeout(Number(value));
+                  }}
+                  error={interDigitTimeout !== data.interDigitTimeout}
+                />
+                <TextFieldWithConfirmationButton
+                  id={"e" + id}
+                  label="max-failure"
+                  type="number"
+                  value={maxFailure}
+                  onChange={(value) => {
+                    setMaxFailure(value);
+                  }}
+                  error={maxFailure !== data.maxFailure}
+                />
+                <TextFieldWithConfirmationButton
+                  id={"f" + id}
+                  label="digit-length"
+                  type="number"
+                  value={digitLength}
+                  onChange={(value) => {
+                    setDigitLength(value);
+                  }}
+                  error={digitLength !== data.digitLength}
+                />
+                <Button>SAVE ALL</Button>
+              </Stack>
+            </GenericAccordion>
+            <GenericAccordion
+              expanded={expanded === "audioConfig"}
+              onChange={() => {
+                if (expanded !== "audioConfig") setExpanded("audioConfig");
+                else setExpanded(false);
+              }}
+              title={"Audio Configuration"}
+            >
+              <Grid container direction={"row"} spacing={1}>
+                <Grid item xs={12}>
+                  <TextField label={"greet-long"} size={"small"} fullWidth />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField label={"gree-short"} size={"small"} fullWidth />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField label={"invalid-sound"} size={"small"} fullWidth />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField label={"exit-sound"} size={"small"} fullWidth />
+                </Grid>
+              </Grid>
+            </GenericAccordion>
+          </GenericAccordion>
         </Box>
-        <Tooltip title="Input">
+        <Tooltip title="Input" arrow>
           <Handle
+            id={uuidv4()}
             type="target"
             position="left"
             style={{
               background: "green",
-              height: "15px",
-              width: "15px",
               border: "none",
-              transform: "translate(-11px,0px)",
+              transform: "translate(-1.4px,0px)",
             }}
-          ></Handle>
+          />
         </Tooltip>
         {/* <div style={handleWrapperStyle}>
         {data.output.map((handle) => (

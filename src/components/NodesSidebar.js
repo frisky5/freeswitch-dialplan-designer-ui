@@ -13,10 +13,24 @@ export default () => {
       </div>
       <div
         className="dndnode input"
-        onDragStart={(event) => onDragStart(event, "input")}
+        onDragStart={(event) => onDragStart(event, "extension")}
         draggable
       >
-        Input Node
+        Extension
+      </div>
+      <div
+        className="dndnode input"
+        onDragStart={(event) => onDragStart(event, "condition")}
+        draggable
+      >
+        Condition
+      </div>
+      <div
+        className="dndnode input"
+        onDragStart={(event) => onDragStart(event, "action")}
+        draggable
+      >
+        Action
       </div>
       <div
         className="dndnode"
@@ -24,13 +38,6 @@ export default () => {
         draggable
       >
         IVR Menu Node
-      </div>
-      <div
-        className="dndnode output"
-        onDragStart={(event) => onDragStart(event, "output")}
-        draggable
-      >
-        Output Node
       </div>
     </aside>
   );

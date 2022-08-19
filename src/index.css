@@ -1,49 +1,51 @@
-.react-flow__node-start {
-  font-family: Roboto;
-  color: white;
-  background-color: green;
-  width: 40px;
-  height: 40px;
-  border-radius: 5px 5px;
-  box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px,
-    rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
-}
-.react-flow__node-ivrMenu {
+.react-flow__node {
   font-family: Roboto;
   font-size: 12px;
   background-color: white;
   width: 500px;
   max-width: 500px;
-
-  border-radius: 5px 5px;
-  box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px,
-    rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+  min-height: 115px;
+  border: solid;
+  border-width: 1px;
+  border-color: rgba(75, 82, 95, 0.5);
+  border-radius: 10px 10px;
 }
-.react-flow__node-output {
-  font-family: Roboto;
+.react-flow__handle{
+  min-height: 10px;
+  min-width: 10px;
+  max-height: 10px;
+  max-width: 10px;
+}
+.react-flow__node-start {
+  color: white;
+  background-color: green;
+  width: 40px;
+  min-height: 40px;
+}
+.react-flow__node-extension {
+  font-size: 12px;
+  background-color: rgb(0, 150, 255,0.3);
+  width: 500px;
+  max-width: 500px;
+}
+.react-flow__node-ivrMenu {
   font-size: 12px;
   background-color: white;
-  min-height: 500px;
-  min-width: 500px;
-  border-radius: 5px 5px;
-  box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px,
-    rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+  width: 500px;
+  max-width: 500px;
 }
-.react-flow__node-input {
-  font-family: Roboto;
+.react-flow__node-condition {
   font-size: 12px;
-  background-color: white;
-  min-height: 500px;
-  min-width: 500px;
-  border-radius: 5px 5px;
-  box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px,
-    rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+  background-color: rgba(251, 223, 7, 0.3);
+  width: 500px;
+  max-width: 500px;
 }
-.react-flow__handle {
-  font-family: Roboto;
+.react-flow__node-action {
   font-size: 12px;
+  background-color: rgb(91, 179, 24,0.3);
+  width: 500px;
+  max-width: 500px;
 }
-
 .dndflow {
   flex-direction: column;
   display: flex;
@@ -72,14 +74,6 @@
   justify-content: center;
   align-items: center;
   cursor: grab;
-}
-
-.dndflow .dndnode.input {
-  border-color: #0041d0;
-}
-
-.dndflow .dndnode.output {
-  border-color: #ff0072;
 }
 
 .dndflow .reactflow-wrapper {
