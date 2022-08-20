@@ -7,8 +7,8 @@ import ReactFlow, {
   useNodesState,
 } from "react-flow-renderer";
 import { v4 as uuidv4 } from "uuid";
-
-import { CssBaseline } from "@mui/material";
+import produce from "immer";
+import { CssBaseline, Button } from "@mui/material";
 import { SmartStepEdge } from "@tisoap/react-flow-smart-edge";
 import DeleteConfirmation from "./components/DeleteConfirmation";
 import NodesSidebar from "./components/NodesSidebar";
@@ -37,7 +37,10 @@ function App() {
   const [deleteTarget, setDeleteTarget] = useState("");
   const [deleteType, setDeleteType] = useState("");
   const [openDeletConfirmation, setOpenDeleteConfirmation] = useState(false);
+
   const reactFlowWrapper = useRef(null);
+  const [reactFlowInstance, setReactFlowInstance] = useState(null);
+
   const [nodes, setNodes, onNodesChange] = useNodesState([
     {
       id: uuidv4(),
@@ -48,7 +51,6 @@ function App() {
     },
   ]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -80,13 +82,13 @@ function App() {
               position,
               data: {
                 name: "",
+                inputHandleId: uuidv4(),
+                extensionContentHandleId: uuidv4(),
+                nextExtensionHandleId: uuidv4(),
                 askDeleteNode: askDeleteNode,
-                saveChanges: saveChanges,
+                saveChanges: saveExtensionChanges,
               },
               dragHandle: ".custom-drag-handle",
-              inputHandleId: uuidv4(),
-              extensionMatch: uuidv4(),
-              nextExtensionHandleId: uuidv4(),
             })
           );
           break;
@@ -190,6 +192,10 @@ function App() {
 
   const onNodeDelete = (id) => {
     setNodes((nds) => nds.filter((node) => node.id !== id));
+    //delete related edges to avoid zombie edges, reactflow do not delete related edges
+    setEdges((eds) =>
+      eds.filter((edge) => edge.source !== id && edge.target !== id)
+    );
   };
 
   const onEdgeDelete = (id) => {
@@ -199,6 +205,11 @@ function App() {
   const saveChanges = (data) => {
     console.log("saving this : ", data);
   };
+
+  function saveExtensionChanges(id, data) {
+    console.log(nodes);
+    console.log(produce(nodes, (draft) => {}));
+  }
 
   return (
     <div className="dndflow">
@@ -243,7 +254,12 @@ function App() {
             <Controls />
           </ReactFlow>
         </div>
-        <NodesSidebar />
+        <NodesSidebar
+          export={() => {
+            console.log("nodes : ", nodes);
+            console.log("edges : ", edges);
+          }}
+        />
       </ReactFlowProvider>
     </div>
   );

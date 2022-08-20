@@ -21,10 +21,6 @@ const handleWrapperStyle = {
   paddingBottom: "40px",
 };
 
-const inputHandleId = uuidv4();
-const matchHandleId = uuidv4();
-const noMatchHandleId = uuidv4();
-
 export default memo(({ data, id, selected }) => {
   const updateNodeInternals = useUpdateNodeInternals();
   const [expandedConfig, setExpandedConfig] = useState(false);
@@ -77,10 +73,16 @@ export default memo(({ data, id, selected }) => {
                 setName(value);
               }}
               error={name !== data.name}
+              onClick={() => {
+                data.saveChanges(id, { name: name });
+              }}
             />
             <Button
               variant="outlined"
               style={{ color: "green", borderColor: "green" }}
+              onClick={() => {
+                data.saveChanges(id, { name: name });
+              }}
             >
               SAVE ALL
             </Button>
@@ -88,7 +90,7 @@ export default memo(({ data, id, selected }) => {
         </GenericAccordion>
         <Tooltip title="Input" arrow disableInteractive>
           <Handle
-            id={inputHandleId}
+            id={data.inputHandleId}
             type="target"
             position="left"
             style={{
@@ -105,7 +107,7 @@ export default memo(({ data, id, selected }) => {
             disableInteractive
           >
             <Handle
-              id={data.extensionMatch}
+              id={data.extensionContentHandleId}
               position="right"
               style={{
                 position: "relative",

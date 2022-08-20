@@ -1,6 +1,7 @@
+import { Button } from "@mui/material";
 import React from "react";
 
-export default () => {
+export default (props) => {
   const onDragStart = (event, nodeType) => {
     event.dataTransfer.setData("application/reactflow", nodeType);
     event.dataTransfer.effectAllowed = "move";
@@ -39,6 +40,7 @@ export default () => {
       >
         IVR Menu Node
       </div>
+      <Button onClick={props.export}>Export</Button>
     </aside>
   );
 };
