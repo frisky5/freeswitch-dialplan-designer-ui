@@ -37,10 +37,7 @@ function App() {
   const [deleteTarget, setDeleteTarget] = useState("");
   const [deleteType, setDeleteType] = useState("");
   const [openDeletConfirmation, setOpenDeleteConfirmation] = useState(false);
-
   const reactFlowWrapper = useRef(null);
-  const [reactFlowInstance, setReactFlowInstance] = useState(null);
-
   const [nodes, setNodes, onNodesChange] = useNodesState([
     {
       id: uuidv4(),
@@ -51,6 +48,7 @@ function App() {
     },
   ]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -206,10 +204,31 @@ function App() {
     console.log("saving this : ", data);
   };
 
-  function saveExtensionChanges(id, data) {
-    console.log(nodes);
-    console.log(produce(nodes, (draft) => {}));
-  }
+  const saveExtensionChanges = (id, data) => {
+    console.log(reactFlowInstance.getNodes());
+    setNodes(
+      produce(reactFlowInstance.getNodes(), (draft) => {
+        draft[draft.findIndex((item, index) => item.id === id)].data.name =
+          data.name;
+      })
+    );
+
+    // setNodes((nodes) =>
+    //   nodes.map((node) => {
+    //     if (node.id === id) {
+    //       const name = data.name;
+    //       return {
+    //         ...node,
+    //         data: {
+    //           ...node.data,
+    //           name,
+    //         },
+    //       };
+    //     }
+    //     return node;
+    //   })
+    // );
+  };
 
   return (
     <div className="dndflow">

@@ -21,16 +21,15 @@ const handleWrapperStyle = {
   paddingBottom: "40px",
 };
 
-export default memo(({ data, id, selected }) => {
+export default memo(({ id, selected, data }) => {
   const updateNodeInternals = useUpdateNodeInternals();
   const [expandedConfig, setExpandedConfig] = useState(false);
 
   const [name, setName] = useState(data.name);
 
   useEffect(() => {
-    updateNodeInternals(id);
-  }, []);
-
+    console.log("data changed : ", data);
+  }, [data]);
   return (
     <div
       style={{
