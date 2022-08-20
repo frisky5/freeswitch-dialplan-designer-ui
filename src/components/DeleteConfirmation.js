@@ -1,10 +1,10 @@
 import {
-  Typography,
   Button,
   Dialog,
-  DialogTitle,
   DialogActions,
   DialogContent,
+  DialogTitle,
+  Typography,
 } from "@mui/material";
 
 export default function DeleteConfirmation(props) {

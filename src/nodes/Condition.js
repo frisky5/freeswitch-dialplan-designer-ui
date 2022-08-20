@@ -1,26 +1,11 @@
+import { Box, Button, Tooltip, Typography } from "@mui/material";
 import React, { memo, useEffect, useState } from "react";
-import {
-  Accordion,
-  AccordionDetails,
-  Box,
-  Grid,
-  Typography,
-  AccordionSummary,
-  Tooltip,
-  Button,
-  IconButton,
-} from "@mui/material";
 
-import { v4 as uuidv4 } from "uuid";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import { Handle } from "react-flow-renderer";
-import PanToolIcon from "@mui/icons-material/PanTool";
 import { Stack } from "@mui/system";
-import TextFieldWithConfirmationButton from "../components/TextFieldWithConfirmationButton";
-import TextField from "../components/TextField";
-import DeleteConfirmation from "../components/DeleteConfirmation";
+import { Handle, useUpdateNodeInternals } from "react-flow-renderer";
+import { v4 as uuidv4 } from "uuid";
 import GenericAccordion from "../components/GenericAccordion";
-import { useUpdateNodeInternals } from "react-flow-renderer";
+import TextFieldWithConfirmationButton from "../components/TextFieldWithConfirmationButton";
 
 const handleWrapperStyle = {
   display: "flex",
@@ -45,7 +30,7 @@ const inputHandleId = uuidv4();
 const matchHandleId = uuidv4();
 const noMatchHandleId = uuidv4();
 
-export default memo(({ data, id }) => {
+export default memo(({ data, id, selected }) => {
   const updateNodeInternals = useUpdateNodeInternals();
   const [expandedConfig, setExpandedConfig] = useState(false);
   const [expanded, setExpanded] = useState("");
@@ -58,101 +43,94 @@ export default memo(({ data, id }) => {
   }, []);
 
   return (
-    <React.Fragment>
+    <div
+      style={{
+        borderRadius: "9px",
+        height: "100%",
+        boxShadow: selected
+          ? "rgba(194, 249, 112,1) 0px 2px 4px 0px, rgba(194, 249, 112,1) 0px 2px 16px 0px"
+          : "",
+      }}
+    >
       <Box
-        mb={1}
         className="custom-drag-handle"
         style={{
-          display: "flex",
-          flexDirection: "row",
-          flexWrap: "nowrap",
-          width: "100%",
-          justifyContent: "space-between",
-          alignItems: "flex-start",
-          borderBottom: "solid",
-          borderWidth: "1px",
+          borderTopLeftRadius: "9px",
+          borderTopRightRadius: "9px",
+          background: "#fbdf07",
         }}
       >
-        <Typography style={{ marginTop: "5px", marginLeft: "15px" }}>
-          Condition
-        </Typography>
-        <IconButton
-          size="small"
-          style={{ marginRight: "20px" }}
-          onClick={() => {
+        <Typography style={{ marginLeft: "15px" }}>Condition</Typography>
+      </Box>
+      <Box p={2}>
+        <GenericAccordion
+          expanded={expandedConfig}
+          onChange={() => {
+            setExpandedConfig(!expandedConfig);
+          }}
+          title={"Configuration"}
+          config
+          onDelete={() => {
             data.askDeleteNode(id);
           }}
         >
-          <DeleteOutlineIcon fontSize="medium" />
-        </IconButton>
-      </Box>
-      <Box>
-        <Box pl={2} pr={2} mb={2}>
-          <GenericAccordion
-            expanded={expandedConfig}
-            onChange={() => {
-              setExpandedConfig(!expandedConfig);
-            }}
-            title={"Configuration"}
-          >
-            <Stack spacing={2}>
-              <TextFieldWithConfirmationButton
-                id={"a" + id}
-                label="Name"
-                type="text"
-                value={name}
-                onChange={(value) => {
-                  setName(value);
-                }}
-                error={name !== data.name}
-              />
-              <Button>SAVE ALL</Button>
-            </Stack>
-          </GenericAccordion>
-        </Box>
+          <Stack spacing={2}>
+            <TextFieldWithConfirmationButton
+              id={"a" + id}
+              label="Name"
+              type="text"
+              value={name}
+              onChange={(value) => {
+                setName(value);
+              }}
+              error={name !== data.name}
+            />
+            <Button style={{ color: "green", borderColor: "green" }}>
+              SAVE ALL
+            </Button>
+          </Stack>
+        </GenericAccordion>
         <Tooltip title="Input" arrow>
           <Handle
             id={inputHandleId}
             type="target"
             position="left"
             style={{
-              background: "green",
               border: "none",
+              background: "#3120E0",
               transform: "translate(-1.4px,0px)",
             }}
           />
         </Tooltip>
         <div style={handleWrapperStyle}>
-          <Tooltip title="Match" arrow>
+          <Tooltip title="Match" arrow disableInteractive>
             <Handle
               id={matchHandleId}
               position="right"
               style={{
-                position: "relative",
-                transform: "none",
                 top: "auto",
-                background: "green",
+                position: "relative",
                 border: "none",
+                background: "#3120E0",
                 transform: "translate(1.4px,0px)",
               }}
             />
           </Tooltip>
-          <Tooltip title="No Match" arrow>
+          <Tooltip title="No Match" arrow disableInteractive>
             <Handle
               id={noMatchHandleId}
               position="right"
               style={{
-                position: "relative",
-                transform: "none",
                 top: "auto",
-                background: "red",
+                position: "relative",
                 border: "none",
+                background: "#3120E0",
                 transform: "translate(1.4px,0px)",
               }}
             />
           </Tooltip>
         </div>
       </Box>
-    </React.Fragment>
+    </div>
   );
 });

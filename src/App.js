@@ -1,23 +1,24 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import ReactFlow, {
-  ReactFlowProvider,
-  useNodesState,
-  useEdgesState,
   addEdge,
-  MiniMap,
   Controls,
+  ReactFlowProvider,
+  useEdgesState,
+  useNodesState,
 } from "react-flow-renderer";
 import { v4 as uuidv4 } from "uuid";
 
+import { CssBaseline } from "@mui/material";
+import { SmartStepEdge } from "@tisoap/react-flow-smart-edge";
+import DeleteConfirmation from "./components/DeleteConfirmation";
+import NodesSidebar from "./components/NodesSidebar";
+import EdgeWithDeleteButton from "./edges/EdgeWithDeleteButton";
+import "./index.css";
+import Action from "./nodes/Action";
+import Condition from "./nodes/Condition";
+import Extension from "./nodes/Extension";
 import IvrMenu from "./nodes/IvrMenu";
 import Start from "./nodes/Start";
-import "./index.css";
-import NodesSidebar from "./components/NodesSidebar";
-import { CssBaseline } from "@mui/material";
-import DeleteConfirmation from "./components/DeleteConfirmation";
-import Extension from "./nodes/Extension";
-import Condition from "./nodes/Condition";
-import Action from "./nodes/Action";
 
 const nodeTypes = {
   ivrMenu: IvrMenu,
@@ -27,8 +28,14 @@ const nodeTypes = {
   action: Action,
 };
 
+const edgeTypes = {
+  smart: SmartStepEdge,
+  edgeWithDeleteButton: EdgeWithDeleteButton,
+};
+
 function App() {
   const [deleteTarget, setDeleteTarget] = useState("");
+  const [deleteType, setDeleteType] = useState("");
   const [openDeletConfirmation, setOpenDeleteConfirmation] = useState(false);
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([
@@ -77,6 +84,9 @@ function App() {
                 saveChanges: saveChanges,
               },
               dragHandle: ".custom-drag-handle",
+              inputHandleId: uuidv4(),
+              extensionMatch: uuidv4(),
+              nextExtensionHandleId: uuidv4(),
             })
           );
           break;
@@ -92,6 +102,9 @@ function App() {
                 saveChanges: saveChanges,
               },
               dragHandle: ".custom-drag-handle",
+              inputHandleId: uuidv4(),
+              matchHandleId: uuidv4(),
+              noMatchHandleId: uuidv4(),
             })
           );
           break;
@@ -107,6 +120,8 @@ function App() {
                 saveChanges: saveChanges,
               },
               dragHandle: ".custom-drag-handle",
+              inputHandleId: uuidv4(),
+              outputHandleId: uuidv4(),
             })
           );
           break;
@@ -140,14 +155,19 @@ function App() {
     setEdges((eds) =>
       addEdge(
         {
-          id: uuidv4(),
           ...params,
-          type: "smoothstep",
+          id: uuidv4(),
+          type: "edgeWithDeleteButton",
+          selected: false,
           markerEnd: {
-            height: "30px",
-            width: "30px",
-            type: "arrowclosed",
+            height: "25px",
+            width: "25px",
+            type: "arrow",
             color: "black",
+            orient: 0,
+          },
+          data: {
+            askDeleteEdge: askDeleteEdge,
           },
         },
         eds
@@ -155,15 +175,25 @@ function App() {
     );
   }, []);
 
-  //Node deletion
-
+  //Deletion
   const askDeleteNode = (nodeId) => {
+    setDeleteType("node");
     setDeleteTarget(nodeId);
+    setOpenDeleteConfirmation(true);
+  };
+
+  const askDeleteEdge = (edgeId) => {
+    setDeleteType("edge");
+    setDeleteTarget(edgeId);
     setOpenDeleteConfirmation(true);
   };
 
   const onNodeDelete = (id) => {
     setNodes((nds) => nds.filter((node) => node.id !== id));
+  };
+
+  const onEdgeDelete = (id) => {
+    setEdges((eds) => eds.filter((edge) => edge.id !== id));
   };
 
   const saveChanges = (data) => {
@@ -175,15 +205,20 @@ function App() {
       <CssBaseline />
       <DeleteConfirmation
         id={deleteTarget}
+        deleteType={deleteType}
         open={openDeletConfirmation}
         yes={() => {
           setOpenDeleteConfirmation(false);
-          onNodeDelete(deleteTarget);
-          setDeleteTarget("");
+          switch (deleteType) {
+            case "node":
+              onNodeDelete(deleteTarget);
+              break;
+            case "edge":
+              onEdgeDelete(deleteTarget);
+          }
         }}
         no={() => {
           setOpenDeleteConfirmation(false);
-          setDeleteTarget("");
         }}
       />
       <ReactFlowProvider>
@@ -196,6 +231,7 @@ function App() {
             nodeTypes={nodeTypes}
             nodes={nodes}
             edges={edges}
+            edgeTypes={edgeTypes}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}

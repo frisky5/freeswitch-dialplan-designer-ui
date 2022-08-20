@@ -28,7 +28,12 @@ export default function TextFieldWithConfirmationButton(props) {
         }}
         endAdornment={
           <InputAdornment position="end">
-            <Button size={"small"} variant="text" onClick={props.onClick}>
+            <Button
+              size={"small"}
+              variant="text"
+              onClick={props.onClick}
+              variant="outlined"
+            >
               Save
             </Button>
           </InputAdornment>

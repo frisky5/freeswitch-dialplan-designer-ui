@@ -9,6 +9,7 @@ import {
   Tooltip,
   Button,
   IconButton,
+  AccordionActions,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
@@ -30,6 +31,17 @@ export default function GenericAccordion(props) {
         <Typography>{props.title}</Typography>
       </AccordionSummary>
       <AccordionDetails>{props.children}</AccordionDetails>
+      {props.config && (
+        <AccordionActions>
+          <Button
+            onClick={props.onDelete}
+            style={{ color: "red", borderColor: "red" }}
+            variant="outlined"
+          >
+            DELETE
+          </Button>
+        </AccordionActions>
+      )}
     </Accordion>
   );
 }

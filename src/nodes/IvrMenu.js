@@ -1,25 +1,19 @@
-import {
-  Accordion,
-  AccordionDetails,
-  Box,
-  Grid,
-  Typography,
-  AccordionSummary,
-  Tooltip,
-  Button,
-  IconButton,
-} from "@mui/material";
-import React, { memo, useEffect, useState } from "react";
-import PanToolIcon from "@mui/icons-material/PanTool";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import GenericAccordion from "../components/GenericAccordion";
+import {
+  Box,
+  Button,
+  Grid,
+  IconButton,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { Stack } from "@mui/system";
+import React, { memo, useEffect, useState } from "react";
+import GenericAccordion from "../components/GenericAccordion";
 import TextFieldWithConfirmationButton from "../components/TextFieldWithConfirmationButton";
-import TextField from "../components/TextField";
 
+import { Handle, useUpdateNodeInternals } from "react-flow-renderer";
 import { v4 as uuidv4 } from "uuid";
-import { Handle } from "react-flow-renderer";
-import { useUpdateNodeInternals } from "react-flow-renderer";
 
 const handleWrapperStyle = {
   display: "flex",
@@ -178,20 +172,7 @@ export default memo(({ data, id }) => {
               }}
               title={"Audio Configuration"}
             >
-              <Grid container direction={"row"} spacing={1}>
-                <Grid item xs={12}>
-                  <TextField label={"greet-long"} size={"small"} fullWidth />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField label={"gree-short"} size={"small"} fullWidth />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField label={"invalid-sound"} size={"small"} fullWidth />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField label={"exit-sound"} size={"small"} fullWidth />
-                </Grid>
-              </Grid>
+              <Stack></Stack>
             </GenericAccordion>
           </GenericAccordion>
         </Box>
@@ -201,8 +182,8 @@ export default memo(({ data, id }) => {
             type="target"
             position="left"
             style={{
-              background: "green",
               border: "none",
+              background: "#3120E0",
               transform: "translate(-1.4px,0px)",
             }}
           />
