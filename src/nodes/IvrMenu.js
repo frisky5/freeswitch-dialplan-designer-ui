@@ -10,7 +10,7 @@ import {
 import { Stack } from "@mui/system";
 import React, { memo, useEffect, useState } from "react";
 import GenericAccordion from "../components/GenericAccordion";
-import TextFieldWithConfirmationButton from "../components/TextFieldWithConfirmationButton";
+import TextField from "../components/TextField";
 
 import { Handle, useUpdateNodeInternals } from "react-flow-renderer";
 import { v4 as uuidv4 } from "uuid";
@@ -97,7 +97,7 @@ export default memo(({ data, id }) => {
               title={"Menu Configuration"}
             >
               <Stack spacing={2}>
-                <TextFieldWithConfirmationButton
+                <TextField
                   id={"a" + id}
                   type="text"
                   label="Name"
@@ -111,7 +111,7 @@ export default memo(({ data, id }) => {
                     data.saveChanges(data);
                   }}
                 />
-                <TextFieldWithConfirmationButton
+                <TextField
                   id={"b" + id}
                   label="Number of output ports"
                   type="number"
@@ -121,7 +121,7 @@ export default memo(({ data, id }) => {
                   }}
                   error={data.noOfOutput !== noOfOutput}
                 />
-                <TextFieldWithConfirmationButton
+                <TextField
                   id={"c" + id}
                   label="timeout"
                   type="number"
@@ -131,7 +131,7 @@ export default memo(({ data, id }) => {
                   }}
                   error={timeout !== data.timeout}
                 />
-                <TextFieldWithConfirmationButton
+                <TextField
                   id={"d" + id}
                   label="inter-digit-timeout"
                   type="number"
@@ -141,7 +141,7 @@ export default memo(({ data, id }) => {
                   }}
                   error={interDigitTimeout !== data.interDigitTimeout}
                 />
-                <TextFieldWithConfirmationButton
+                <TextField
                   id={"e" + id}
                   label="max-failure"
                   type="number"
@@ -151,7 +151,7 @@ export default memo(({ data, id }) => {
                   }}
                   error={maxFailure !== data.maxFailure}
                 />
-                <TextFieldWithConfirmationButton
+                <TextField
                   id={"f" + id}
                   label="digit-length"
                   type="number"
@@ -183,7 +183,7 @@ export default memo(({ data, id }) => {
             position="left"
             style={{
               border: "none",
-              background: "#3120E0",
+              background: "#FF5A33",
               transform: "translate(-1.4px,0px)",
             }}
           />

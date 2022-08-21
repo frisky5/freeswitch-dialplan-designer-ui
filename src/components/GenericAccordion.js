@@ -10,9 +10,11 @@ import {
   Button,
   IconButton,
   AccordionActions,
+  Stack,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-
+import SaveIcon from "@mui/icons-material/Save";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 export default function GenericAccordion(props) {
   return (
     <Accordion
@@ -30,15 +32,37 @@ export default function GenericAccordion(props) {
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography>{props.title}</Typography>
       </AccordionSummary>
-      <AccordionDetails>{props.children}</AccordionDetails>
+      <AccordionDetails>
+        <Stack spacing={2} alignItems="center">
+          {props.children}
+          <Button
+            size="small"
+            variant="contained"
+            style={{
+              width: "20%",
+              color: "white",
+              background: "#44803F",
+            }}
+            onClick={props.onSave}
+            startIcon={<SaveIcon />}
+          >
+            save
+          </Button>
+        </Stack>
+      </AccordionDetails>
       {props.config && (
         <AccordionActions>
           <Button
+            size="small"
             onClick={props.onDelete}
-            style={{ color: "red", borderColor: "red" }}
-            variant="outlined"
+            style={{
+              color: "white",
+              background: "#FF5A33",
+            }}
+            variant="contained"
+            startIcon={<DeleteForeverIcon />}
           >
-            DELETE
+            delete
           </Button>
         </AccordionActions>
       )}

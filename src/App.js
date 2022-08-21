@@ -1,4 +1,7 @@
 import React, { useCallback, useRef, useState } from "react";
+import { CssBaseline } from "@mui/material";
+import { SmartStepEdge } from "@tisoap/react-flow-smart-edge";
+import produce from "immer";
 import ReactFlow, {
   addEdge,
   Controls,
@@ -7,9 +10,6 @@ import ReactFlow, {
   useNodesState,
 } from "react-flow-renderer";
 import { v4 as uuidv4 } from "uuid";
-import produce from "immer";
-import { CssBaseline, Button } from "@mui/material";
-import { SmartStepEdge } from "@tisoap/react-flow-smart-edge";
 import DeleteConfirmation from "./components/DeleteConfirmation";
 import NodesSidebar from "./components/NodesSidebar";
 import EdgeWithDeleteButton from "./edges/EdgeWithDeleteButton";
@@ -19,6 +19,8 @@ import Condition from "./nodes/Condition";
 import Extension from "./nodes/Extension";
 import IvrMenu from "./nodes/IvrMenu";
 import Start from "./nodes/Start";
+import { conditionLogicTypes } from "./constants";
+import ConfigurationDialog from "./components/ConfigurationDialog";
 
 const nodeTypes = {
   ivrMenu: IvrMenu,
@@ -34,21 +36,27 @@ const edgeTypes = {
 };
 
 function App() {
-  const [deleteTarget, setDeleteTarget] = useState("");
-  const [deleteType, setDeleteType] = useState("");
-  const [openDeletConfirmation, setOpenDeleteConfirmation] = useState(false);
   const reactFlowWrapper = useRef(null);
+  const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([
     {
       id: uuidv4(),
       type: "start",
       draggable: false,
-      data: { handleId: uuidv4() },
+      selectable: false,
       position: { x: 0, y: 0 },
+      data: { handleId: uuidv4() },
     },
   ]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [reactFlowInstance, setReactFlowInstance] = useState(null);
+
+  const [deleteTarget, setDeleteTarget] = useState("");
+  const [deleteType, setDeleteType] = useState("");
+  const [openDeletConfirmation, setOpenDeleteConfirmation] = useState(false);
+  const [openConfigDialog, setOpenConfigDialog] = useState(false);
+  const [configTargetId, setConfigTargetId] = useState("");
+  const [configType, setConfigType] = useState("");
+  const [nodeData, setNodeData] = useState({});
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -58,92 +66,86 @@ function App() {
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
-
       const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
       const type = event.dataTransfer.getData("application/reactflow");
 
-      // check if the dropped element is valid
-      if (type == null) {
-        return;
-      }
+      if (type == null) return;
+
       const position = reactFlowInstance.project({
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
       });
 
+      let node = {
+        id: uuidv4(),
+        type,
+        position,
+        dragHandle: ".custom-drag-handle",
+        data: {
+          name: "",
+          inputHandleId: uuidv4(),
+          openConfig: openConfig,
+          askDeleteNode: askDeleteNode,
+        },
+      };
+
       switch (type) {
         case "extension":
-          setNodes((nds) =>
-            nds.concat({
-              id: uuidv4(),
-              type,
-              position,
-              data: {
-                name: "",
-                inputHandleId: uuidv4(),
-                extensionContentHandleId: uuidv4(),
-                nextExtensionHandleId: uuidv4(),
-                askDeleteNode: askDeleteNode,
-                saveChanges: saveExtensionChanges,
-              },
-              dragHandle: ".custom-drag-handle",
-            })
-          );
+          node = {
+            ...node,
+            data: {
+              ...node.data,
+              extensionContentHandleId: uuidv4(),
+              nextExtensionHandleId: uuidv4(),
+              saveChanges: saveExtensionChanges,
+            },
+          };
+          setNodes((nds) => nds.concat(node));
           break;
+
         case "condition":
-          setNodes((nds) =>
-            nds.concat({
-              id: uuidv4(),
-              type,
-              position,
-              data: {
-                name: "",
-                askDeleteNode: askDeleteNode,
-                saveChanges: saveChanges,
-              },
-              dragHandle: ".custom-drag-handle",
-              inputHandleId: uuidv4(),
+          node = {
+            ...node,
+            data: {
+              ...node.data,
+              conditions: [],
+              logic: 1,
               matchHandleId: uuidv4(),
               noMatchHandleId: uuidv4(),
-            })
-          );
+              saveChanges: saveConditionChanges,
+            },
+          };
+          setNodes((nds) => nds.concat(node));
           break;
+
         case "action":
-          setNodes((nds) =>
-            nds.concat({
-              id: uuidv4(),
-              type,
-              position,
-              data: {
-                name: "",
-                askDeleteNode: askDeleteNode,
-                saveChanges: saveChanges,
-              },
-              dragHandle: ".custom-drag-handle",
-              inputHandleId: uuidv4(),
+          node = {
+            ...node,
+            data: {
+              ...node.data,
               outputHandleId: uuidv4(),
-            })
-          );
+              saveChanges: saveActionChanges,
+            },
+          };
+          setNodes((nds) => nds.concat(node));
           break;
+
         case "ivrMenu":
-          setNodes((nds) =>
-            nds.concat({
-              id: uuidv4(),
-              type,
-              position,
-              data: {
-                name: "",
-                noOfOutput: 0,
-                timeout: 0,
-                interDigitTimeout: 0,
-                maxFailure: 0,
-                digitLength: 0,
-                askDeleteNode: askDeleteNode,
-                saveChanges: saveChanges,
-              },
-              dragHandle: ".custom-drag-handle",
-            })
-          );
+          node = {
+            ...node,
+            data: {
+              ...node.data,
+              noOfOutput: 0,
+              timeout: 0,
+              interDigitTimeout: 0,
+              maxFailure: 0,
+              digitLength: 0,
+              saveChanges: saveChanges,
+            },
+          };
+          setNodes((nds) => nds.concat(node));
+          break;
+        default:
           break;
       }
     },
@@ -175,6 +177,15 @@ function App() {
     );
   }, []);
 
+  function openConfig(id, type) {
+    const indexOfNode = reactFlowInstance
+      .getNodes()
+      .findIndex((item, index) => item.id === id);
+    setNodeData(reactFlowInstance.getNodes()[indexOfNode].data);
+    setConfigTargetId(id);
+    setConfigType(type);
+    setOpenConfigDialog(true);
+  }
   //Deletion
   const askDeleteNode = (nodeId) => {
     setDeleteType("node");
@@ -190,7 +201,7 @@ function App() {
 
   const onNodeDelete = (id) => {
     setNodes((nds) => nds.filter((node) => node.id !== id));
-    //delete related edges to avoid zombie edges, reactflow do not delete related edges
+    //delete related edges to avoid zombie edges
     setEdges((eds) =>
       eds.filter((edge) => edge.source !== id && edge.target !== id)
     );
@@ -205,29 +216,30 @@ function App() {
   };
 
   const saveExtensionChanges = (id, data) => {
-    console.log(reactFlowInstance.getNodes());
     setNodes(
       produce(reactFlowInstance.getNodes(), (draft) => {
-        draft[draft.findIndex((item, index) => item.id === id)].data.name =
-          data.name;
+        const indexOfNode = draft.findIndex((item, index) => item.id === id);
+        draft[indexOfNode].data.name = data.name;
       })
     );
+  };
 
-    // setNodes((nodes) =>
-    //   nodes.map((node) => {
-    //     if (node.id === id) {
-    //       const name = data.name;
-    //       return {
-    //         ...node,
-    //         data: {
-    //           ...node.data,
-    //           name,
-    //         },
-    //       };
-    //     }
-    //     return node;
-    //   })
-    // );
+  const saveConditionChanges = (id, data) => {
+    setNodes(
+      produce(reactFlowInstance.getNodes(), (draft) => {
+        const indexOfNode = draft.findIndex((item, index) => item.id === id);
+        draft[indexOfNode].data.name = data.name;
+      })
+    );
+  };
+
+  const saveActionChanges = (id, data) => {
+    setNodes(
+      produce(reactFlowInstance.getNodes(), (draft) => {
+        const indexOfNode = draft.findIndex((item, index) => item.id === id);
+        draft[indexOfNode].data.name = data.name;
+      })
+    );
   };
 
   return (
@@ -245,12 +257,25 @@ function App() {
               break;
             case "edge":
               onEdgeDelete(deleteTarget);
+              break;
+            default:
+              break;
           }
         }}
         no={() => {
           setOpenDeleteConfirmation(false);
         }}
       />
+      <ConfigurationDialog
+        open={openConfigDialog}
+        close={() => {
+          setOpenConfigDialog(false);
+        }}
+        type={configType}
+        targetId={configTargetId}
+        nodeData={nodeData}
+      />
+
       <ReactFlowProvider>
         <div
           className="reactflow-wrapper"

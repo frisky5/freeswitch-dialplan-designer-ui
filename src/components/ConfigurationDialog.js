@@ -6,34 +6,36 @@ import {
   DialogTitle,
   Typography,
 } from "@mui/material";
-
-export default function DeleteConfirmation(props) {
+import ExtensionConfiguration from "./ExtensionConfiguration";
+export default function ConfigurationDialog(props) {
   return (
-    <Dialog open={props.open}>
-      <DialogTitle>Delete Confirmation</DialogTitle>
+    <Dialog open={props.open} maxWidth="xl">
+      <DialogTitle>Configuration</DialogTitle>
       <DialogContent>
-        <Typography>
-          Are you sure you want to delete {props.deleteType} with the ID{" "}
-          {props.id} ?
-        </Typography>
+        {props.type === "extension" && (
+          <ExtensionConfiguration
+            targetId={props.targetId}
+            nodeData={props.nodeData}
+          />
+        )}
       </DialogContent>
       <DialogActions>
         <Button
           variant="text"
           onClick={() => {
-            props.yes();
+            props.save();
           }}
         >
-          Yes
+          Save
         </Button>
         <Button
           variant="text"
           color="secondary"
           onClick={() => {
-            props.no();
+            props.close();
           }}
         >
-          No
+          Cancel
         </Button>
       </DialogActions>
     </Dialog>

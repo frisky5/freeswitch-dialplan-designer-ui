@@ -1,11 +1,12 @@
-import { Box, Button, Tooltip, Typography } from "@mui/material";
 import React, { memo, useEffect, useState } from "react";
-
-import { Stack } from "@mui/system";
+import { Box, Tooltip, Typography, Divider, Chip } from "@mui/material";
 import { Handle, useUpdateNodeInternals } from "react-flow-renderer";
-import { v4 as uuidv4 } from "uuid";
 import GenericAccordion from "../components/GenericAccordion";
-import TextFieldWithConfirmationButton from "../components/TextFieldWithConfirmationButton";
+import TextField from "../components/TextField";
+import Dropdown from "../components/Dropdown";
+import { conditionLogicTypes } from "../constants";
+import { v4 as uuidv4 } from "uuid";
+import SingleCondition from "../components/SingleCondition";
 
 const handleWrapperStyle = {
   display: "flex",
@@ -15,28 +16,15 @@ const handleWrapperStyle = {
   top: 0,
   flexDirection: "column",
   justifyContent: "space-between",
-  paddingTop: "40px",
-  paddingBottom: "40px",
+  paddingTop: "45px",
+  paddingBottom: "20px",
 };
-
-const handleStyle = {
-  position: "relative",
-  transform: "none",
-  top: "auto",
-  color: "red",
-};
-
-const inputHandleId = uuidv4();
-const matchHandleId = uuidv4();
-const noMatchHandleId = uuidv4();
 
 export default memo(({ data, id, selected }) => {
   const updateNodeInternals = useUpdateNodeInternals();
   const [expandedConfig, setExpandedConfig] = useState(false);
-  const [expanded, setExpanded] = useState("");
-  const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
 
-  const [name, setName] = useState(data.name);
+  const [logic, setLogic] = useState(1);
 
   useEffect(() => {
     updateNodeInternals(id);
@@ -48,7 +36,7 @@ export default memo(({ data, id, selected }) => {
         borderRadius: "9px",
         height: "100%",
         boxShadow: selected
-          ? "rgba(194, 249, 112,1) 0px 2px 4px 0px, rgba(194, 249, 112,1) 0px 2px 16px 0px"
+          ? "#B4CF66 0px 2px 4px 0px, #B4CF66 0px 2px 16px 0px"
           : "",
       }}
     >
@@ -57,12 +45,15 @@ export default memo(({ data, id, selected }) => {
         style={{
           borderTopLeftRadius: "9px",
           borderTopRightRadius: "9px",
-          background: "#fbdf07",
+          background: "#FFEC5C",
+          height: "35px",
         }}
       >
-        <Typography style={{ marginLeft: "15px" }}>Condition</Typography>
+        <Typography style={{ padding: "5px", paddingLeft: "15px" }}>
+          Condition
+        </Typography>
       </Box>
-      <Box p={2}>
+      <Box p={1}>
         <GenericAccordion
           expanded={expandedConfig}
           onChange={() => {
@@ -73,31 +64,34 @@ export default memo(({ data, id, selected }) => {
           onDelete={() => {
             data.askDeleteNode(id);
           }}
+          onSave={() => {
+            data.saveConditionChanges();
+          }}
         >
-          <Stack spacing={2}>
-            <TextFieldWithConfirmationButton
-              id={"a" + id}
-              label="Name"
-              type="text"
-              value={name}
-              onChange={(value) => {
-                setName(value);
-              }}
-              error={name !== data.name}
-            />
-            <Button style={{ color: "green", borderColor: "green" }}>
-              SAVE ALL
-            </Button>
-          </Stack>
+          <Dropdown
+            label={"Logic Type"}
+            value={logic}
+            onChange={(logicType) => {
+              setLogic(logicType);
+            }}
+            lebelId={"label" + uuidv4()}
+            selectId={"select" + uuidv4()}
+            options={conditionLogicTypes}
+            error={data.logic !== logic}
+          />
+
+          <Chip label="Logic Configuration" />
+
+          {logic === 1 && <SingleCondition />}
         </GenericAccordion>
         <Tooltip title="Input" arrow>
           <Handle
-            id={inputHandleId}
+            id={data.inputHandleId}
             type="target"
             position="left"
             style={{
               border: "none",
-              background: "#3120E0",
+              background: "#FF5A33",
               transform: "translate(-1.4px,0px)",
             }}
           />
@@ -105,26 +99,26 @@ export default memo(({ data, id, selected }) => {
         <div style={handleWrapperStyle}>
           <Tooltip title="Match" arrow disableInteractive>
             <Handle
-              id={matchHandleId}
+              id={data.matchHandleId}
               position="right"
               style={{
                 top: "auto",
                 position: "relative",
                 border: "none",
-                background: "#3120E0",
+                background: "#FF5A33",
                 transform: "translate(1.4px,0px)",
               }}
             />
           </Tooltip>
           <Tooltip title="No Match" arrow disableInteractive>
             <Handle
-              id={noMatchHandleId}
+              id={data.noMatchHandleId}
               position="right"
               style={{
                 top: "auto",
                 position: "relative",
                 border: "none",
-                background: "#3120E0",
+                background: "#FF5A33",
                 transform: "translate(1.4px,0px)",
               }}
             />

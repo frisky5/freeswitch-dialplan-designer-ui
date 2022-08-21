@@ -1,14 +1,12 @@
 .react-flow__node {
   font-family: Roboto;
-  font-size: 12px;
   background-color: white;
   width: 500px;
   max-width: 500px;
-
   border: solid;
   border-width: 1px;
   border-color: rgba(75, 82, 95, 0.5);
-  border-radius: 10px 10px;
+  border-radius: 9px 9px;
 }
 .react-flow__handle{
   min-height: 10px;
