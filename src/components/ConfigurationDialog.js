@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import ExtensionConfiguration from "./ExtensionConfiguration";
+import ConditionConfiguration from "./ConditionConfiguration";
 
 export default function ConfigurationDialog(props) {
   const [disable, setDisable] = useState(false);
@@ -25,10 +26,21 @@ export default function ConfigurationDialog(props) {
         {props.type === "extension" && (
           <ExtensionConfiguration
             triggerSave={triggerSave}
-            targetId={props.targetId}
+            nodeId={props.nodeId}
             nodeData={props.nodeData}
             save={(data) => {
-              props.saveExtensionChanges(data);
+              props.saveExtensionNodeChanges(data);
+              setTriggerSave(false);
+            }}
+          />
+        )}
+        {props.type === "condition" && (
+          <ConditionConfiguration
+            triggerSave={triggerSave}
+            nodeId={props.nodeId}
+            nodeData={props.nodeData}
+            save={(data) => {
+              props.saveConditionNodeChanges(data);
               setTriggerSave(false);
             }}
           />
@@ -43,16 +55,25 @@ export default function ConfigurationDialog(props) {
             setTriggerSave(true);
           }}
         >
-          Save
+          save
+        </Button>
+        <Button
+          variant="text"
+          style={{ color: "orange" }}
+          onClick={() => {
+            props.close();
+          }}
+        >
+          cancel
         </Button>
         <Button
           variant="text"
           style={{ color: "red" }}
           onClick={() => {
-            props.close();
+            props.askDeleteNode(props.nodeId);
           }}
         >
-          Cancel
+          delete
         </Button>
       </DialogActions>
     </Dialog>

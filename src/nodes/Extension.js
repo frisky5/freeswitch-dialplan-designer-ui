@@ -68,11 +68,7 @@ export default memo(({ id, selected, data }) => {
         />
       </Tooltip>
       <div style={handleWrapperStyle}>
-        <Tooltip
-          title="Match, connect to Condition or Action"
-          arrow
-          disableInteractive
-        >
+        <Tooltip title="Extension content" arrow disableInteractive>
           <Handle
             id={data.extensionContentHandleId}
             position="right"

@@ -53,10 +53,11 @@ function App() {
   const [deleteTarget, setDeleteTarget] = useState("");
   const [deleteType, setDeleteType] = useState("");
   const [openDeletConfirmation, setOpenDeleteConfirmation] = useState(false);
+  //node configuration states
   const [openConfigDialog, setOpenConfigDialog] = useState(false);
-  const [configTargetId, setConfigTargetId] = useState("");
-  const [configType, setConfigType] = useState("");
-  const [nodeData, setNodeData] = useState({});
+  const [configNodeId, setConfigNodeId] = useState("");
+  const [configNodeType, setConfigNodeType] = useState("");
+  const [configNodeData, setConfigNodeData] = useState({});
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -148,8 +149,8 @@ function App() {
     [reactFlowInstance]
   );
 
+  // trigger on nodes connection
   const onConnect = useCallback((params) => {
-    console.log(params);
     setEdges((eds) =>
       addEdge(
         {
@@ -173,20 +174,19 @@ function App() {
     );
   }, []);
 
-  function openConfig(id, type) {
-    setConfigTargetId(id);
-    setConfigType(type);
-    const indexOfNode = reactFlowInstance
-      .getNodes()
-      .findIndex((item, index) => item.id === id);
-    setNodeData(reactFlowInstance.getNodes()[indexOfNode].data);
-    setOpenConfigDialog(true);
-  }
-  //Deletion
+  //Node and Edges Deletion
   const askDeleteNode = (nodeId) => {
     setDeleteType("node");
     setDeleteTarget(nodeId);
     setOpenDeleteConfirmation(true);
+  };
+
+  const deleteNode = (id) => {
+    setNodes((nds) => nds.filter((node) => node.id !== id));
+    //delete related edges to avoid zombie edges
+    setEdges((eds) =>
+      eds.filter((edge) => edge.source !== id && edge.target !== id)
+    );
   };
 
   const askDeleteEdge = (edgeId) => {
@@ -195,23 +195,26 @@ function App() {
     setOpenDeleteConfirmation(true);
   };
 
-  const onNodeDelete = (id) => {
-    setNodes((nds) => nds.filter((node) => node.id !== id));
-    //delete related edges to avoid zombie edges
-    setEdges((eds) =>
-      eds.filter((edge) => edge.source !== id && edge.target !== id)
-    );
-  };
-
-  const onEdgeDelete = (id) => {
+  const deleteEdge = (id) => {
     setEdges((eds) => eds.filter((edge) => edge.id !== id));
   };
 
-  const saveExtensionChanges = (data) => {
+  //configuration
+  function openConfig(id, type) {
+    setConfigNodeId(id);
+    setConfigNodeType(type);
+    const indexOfNode = reactFlowInstance
+      .getNodes()
+      .findIndex((item, index) => item.id === id);
+    setConfigNodeData(reactFlowInstance.getNodes()[indexOfNode].data);
+    setOpenConfigDialog(true);
+  }
+
+  const saveExtensionNodeChanges = (data) => {
     setNodes(
       produce(reactFlowInstance.getNodes(), (draft) => {
         const indexOfNode = draft.findIndex(
-          (item, index) => item.id === configTargetId
+          (item, index) => item.id === configNodeId
         );
         if (data.name != null) draft[indexOfNode].data.name = data.name;
       })
@@ -219,7 +222,7 @@ function App() {
     setOpenConfigDialog(false);
   };
 
-  const saveConditionChanges = (id, data) => {
+  const saveConditionNodeChanges = (id, data) => {
     setNodes(
       produce(reactFlowInstance.getNodes(), (draft) => {
         const indexOfNode = draft.findIndex((item, index) => item.id === id);
@@ -228,7 +231,7 @@ function App() {
     );
   };
 
-  const saveActionChanges = (id, data) => {
+  const saveActionNodeChanges = (id, data) => {
     setNodes(
       produce(reactFlowInstance.getNodes(), (draft) => {
         const indexOfNode = draft.findIndex((item, index) => item.id === id);
@@ -245,17 +248,18 @@ function App() {
         deleteType={deleteType}
         open={openDeletConfirmation}
         yes={() => {
-          setOpenDeleteConfirmation(false);
           switch (deleteType) {
             case "node":
-              onNodeDelete(deleteTarget);
+              deleteNode(deleteTarget);
               break;
             case "edge":
-              onEdgeDelete(deleteTarget);
+              deleteEdge(deleteTarget);
               break;
             default:
               break;
           }
+          setOpenDeleteConfirmation(false);
+          if (openConfigDialog) setOpenConfigDialog(false);
         }}
         no={() => {
           setOpenDeleteConfirmation(false);
@@ -266,12 +270,13 @@ function App() {
         close={() => {
           setOpenConfigDialog(false);
         }}
-        type={configType}
-        targetId={configTargetId}
-        nodeData={nodeData}
-        saveExtensionChanges={saveExtensionChanges}
-        saveConditionChanges={saveConditionChanges}
-        saveActionChanges={saveActionChanges}
+        type={configNodeType}
+        nodeId={configNodeId}
+        nodeData={configNodeData}
+        askDeleteNode={askDeleteNode}
+        saveExtensionNodeChanges={saveExtensionNodeChanges}
+        saveConditionNodeChanges={saveConditionNodeChanges}
+        saveActionNodeChanges={saveActionNodeChanges}
       />
 
       <ReactFlowProvider>
