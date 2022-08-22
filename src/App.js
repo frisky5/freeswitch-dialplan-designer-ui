@@ -97,7 +97,6 @@ function App() {
               ...node.data,
               extensionContentHandleId: uuidv4(),
               nextExtensionHandleId: uuidv4(),
-              saveChanges: saveExtensionChanges,
             },
           };
           setNodes((nds) => nds.concat(node));
@@ -112,7 +111,6 @@ function App() {
               logic: 1,
               matchHandleId: uuidv4(),
               noMatchHandleId: uuidv4(),
-              saveChanges: saveConditionChanges,
             },
           };
           setNodes((nds) => nds.concat(node));
@@ -124,7 +122,6 @@ function App() {
             data: {
               ...node.data,
               outputHandleId: uuidv4(),
-              saveChanges: saveActionChanges,
             },
           };
           setNodes((nds) => nds.concat(node));
@@ -140,7 +137,6 @@ function App() {
               interDigitTimeout: 0,
               maxFailure: 0,
               digitLength: 0,
-              saveChanges: saveChanges,
             },
           };
           setNodes((nds) => nds.concat(node));
@@ -178,12 +174,12 @@ function App() {
   }, []);
 
   function openConfig(id, type) {
+    setConfigTargetId(id);
+    setConfigType(type);
     const indexOfNode = reactFlowInstance
       .getNodes()
       .findIndex((item, index) => item.id === id);
     setNodeData(reactFlowInstance.getNodes()[indexOfNode].data);
-    setConfigTargetId(id);
-    setConfigType(type);
     setOpenConfigDialog(true);
   }
   //Deletion
@@ -211,17 +207,16 @@ function App() {
     setEdges((eds) => eds.filter((edge) => edge.id !== id));
   };
 
-  const saveChanges = (data) => {
-    console.log("saving this : ", data);
-  };
-
-  const saveExtensionChanges = (id, data) => {
+  const saveExtensionChanges = (data) => {
     setNodes(
       produce(reactFlowInstance.getNodes(), (draft) => {
-        const indexOfNode = draft.findIndex((item, index) => item.id === id);
-        draft[indexOfNode].data.name = data.name;
+        const indexOfNode = draft.findIndex(
+          (item, index) => item.id === configTargetId
+        );
+        if (data.name != null) draft[indexOfNode].data.name = data.name;
       })
     );
+    setOpenConfigDialog(false);
   };
 
   const saveConditionChanges = (id, data) => {
@@ -274,6 +269,9 @@ function App() {
         type={configType}
         targetId={configTargetId}
         nodeData={nodeData}
+        saveExtensionChanges={saveExtensionChanges}
+        saveConditionChanges={saveConditionChanges}
+        saveActionChanges={saveActionChanges}
       />
 
       <ReactFlowProvider>

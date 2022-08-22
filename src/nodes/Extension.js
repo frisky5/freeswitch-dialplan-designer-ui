@@ -1,11 +1,7 @@
-import { Box, Tooltip, Typography, Button } from "@mui/material";
-import React, { memo, useEffect, useState } from "react";
+import { Box, Button, Tooltip, Typography } from "@mui/material";
+import { memo } from "react";
 
 import { Handle } from "react-flow-renderer";
-
-import { useUpdateNodeInternals } from "react-flow-renderer";
-import GenericAccordion from "../components/GenericAccordion";
-import TextField from "../components/TextField";
 
 const handleWrapperStyle = {
   display: "flex",
@@ -20,12 +16,6 @@ const handleWrapperStyle = {
 };
 
 export default memo(({ id, selected, data }) => {
-  const [expandedConfig, setExpandedConfig] = useState(false);
-  const [name, setName] = useState(data.name);
-
-  useEffect(() => {
-    if (!selected) setExpandedConfig(false);
-  }, [selected]);
   return (
     <div
       style={{
@@ -51,90 +41,68 @@ export default memo(({ id, selected, data }) => {
           Extension
         </Typography>
       </Box>
-      <Box p={2}>
-        <Button
-          variant={"outlined"}
-          onClick={() => {
-            data.openConfig(id, "extension");
-          }}
-        >
-          Configure
-        </Button>
-        <GenericAccordion
-          expanded={expandedConfig}
-          onChange={() => {
-            setExpandedConfig(!expandedConfig);
-          }}
-          title={"Configuration"}
-          config
-          onDelete={() => {
-            data.askDeleteNode(id);
-          }}
-          onSave={() => {}}
-        >
-          <TextField
-            id={"name" + id}
-            label="Name"
-            type="text"
-            value={name}
-            onChange={(value) => {
-              setName(value);
-            }}
-            error={name !== data.name}
+      <Box padding={2}>
+        <Tooltip title={data.name} arrow disableInteractive>
+          <Button
+            fullWidth
+            variant={"outlined"}
+            style={{ color: "white", background: "#146152", border: "none" }}
             onClick={() => {
-              data.saveChanges(id, { name: name });
+              data.openConfig(id, "extension");
             }}
-          />
-        </GenericAccordion>
-        <Tooltip title="Input" arrow disableInteractive>
+          >
+            Configure
+          </Button>
+        </Tooltip>
+      </Box>
+      <Tooltip title="Input" arrow disableInteractive>
+        <Handle
+          id={data.inputHandleId}
+          type="target"
+          position="left"
+          style={{
+            border: "none",
+            background: "#FF5A33",
+            transform: "translate(-1.4px,0px)",
+          }}
+        />
+      </Tooltip>
+      <div style={handleWrapperStyle}>
+        <Tooltip
+          title="Match, connect to Condition or Action"
+          arrow
+          disableInteractive
+        >
           <Handle
-            id={data.inputHandleId}
-            type="target"
-            position="left"
+            id={data.extensionContentHandleId}
+            position="right"
             style={{
+              position: "relative",
+              top: "auto",
               border: "none",
               background: "#FF5A33",
-              transform: "translate(-1.4px,0px)",
+              transform: "translate(1.4px,0px)",
             }}
           />
         </Tooltip>
-        <div style={handleWrapperStyle}>
-          <Tooltip
-            title="Match, connect to Condition or Action"
-            arrow
-            disableInteractive
-          >
-            <Handle
-              id={data.extensionContentHandleId}
-              position="right"
-              style={{
-                position: "relative",
-                top: "auto",
-                border: "none",
-                background: "#FF5A33",
-                transform: "translate(1.4px,0px)",
-              }}
-            />
-          </Tooltip>
-          <Tooltip
-            title="No Match, Connect to Extension"
-            arrow
-            disableInteractive
-          >
-            <Handle
-              id={data.nextExtensionHandleId}
-              position="right"
-              style={{
-                position: "relative",
-                top: "auto",
-                border: "none",
-                background: "#FF5A33",
-                transform: "translate(1.4px,0px)",
-              }}
-            />
-          </Tooltip>
-        </div>
-      </Box>
+        <Tooltip
+          title="No Match, Connect to Extension"
+          arrow
+          disableInteractive
+        >
+          <Handle
+            id={data.nextExtensionHandleId}
+            position="right"
+            style={{
+              position: "relative",
+              top: "auto",
+              border: "none",
+              background: "#FF5A33",
+              transform: "translate(1.4px,0px)",
+            }}
+          />
+        </Tooltip>
+      </div>
     </div>
   );
 });

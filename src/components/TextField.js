@@ -2,7 +2,13 @@ import { FilledInput, FormControl, InputLabel } from "@mui/material";
 
 export default function TextField(props) {
   return (
-    <FormControl variant="filled" size="small" fullWidth error={props.error}>
+    <FormControl
+      variant="filled"
+      size="small"
+      fullWidth
+      error={props.error}
+      required
+    >
       <InputLabel htmlFor={props.id}>{props.label}</InputLabel>
       <FilledInput
         id={props.id}
