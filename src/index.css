@@ -1,23 +1,13 @@
 .react-flow__node {
-  font-family: Roboto;
   background-color: white;
-  width: 500px;
-  max-width: 500px;
-  border: solid;
-  border-width: 1px;
-  border-color: rgba(75, 82, 95, 0.5);
-  border-radius: 9px 9px;
 }
-.react-flow__handle{
-  min-height: 10px;
-  min-width: 10px;
-}
+
 .react-flow__node-start {
   background-color: white;
   width: 40px;
   min-height: 40px;
   border-radius: 50%;
-  border:none;
+  border: none;
 }
 .react-flow__node-extension {
   width: 150px;
@@ -31,6 +21,10 @@
 .react-flow__node-action {
   width: 500px;
   max-width: 500px;
+  border: solid;
+  border-color: #2ecc71;
+  border-radius: 9px 9px;
+  border-width: 1px;
 }
 .react-flow__node-ivrMenu {
   width: 500px;

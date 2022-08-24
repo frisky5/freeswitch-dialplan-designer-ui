@@ -12,24 +12,25 @@ export default memo(({ id, selected, data }) => {
   return (
     <div
       style={{
-        borderRadius: "9px 9px",
         height: "100%",
         boxShadow: selected
-          ? "#B4CF66 0px 2px 4px 0px, #B4CF66 0px 2px 16px 0px"
+          ? "rgba(90,255,21,1) 0px 2px 4px 0px, rgba(90,255,21,1) 0px 2px 16px 0px"
           : "",
+        borderRadius: "7px 7px",
+        border: "none",
       }}
     >
       <Box
         className="custom-drag-handle"
         style={{
-          borderTopLeftRadius: "9px",
-          borderTopRightRadius: "9px",
-          background: "#44803F",
+          borderTopLeftRadius: "7px",
+          borderTopRightRadius: "7px",
+          background: "#2ecc71",
           height: "35px",
         }}
       >
         <Typography
-          style={{ padding: "5px", paddingLeft: "15px", color: "white" }}
+          style={{ padding: "5px", paddingLeft: "15px", color: "black" }}
         >
           Action
         </Typography>
@@ -66,9 +67,13 @@ export default memo(({ id, selected, data }) => {
             type="target"
             position="left"
             style={{
-              transform: "translate(-2px,0px)",
-              border: "none",
-              background: "#FF5A33",
+              transform: "translate(-1px,0px)",
+              border: "solid",
+              borderWidth: "1px",
+              borderColor: "#e74c3c",
+              background: "#FFFFFF",
+              height: "10px",
+              width: "10px",
             }}
           />
         </Tooltip>
@@ -77,9 +82,13 @@ export default memo(({ id, selected, data }) => {
             id={data.outputHandleId}
             position="right"
             style={{
-              transform: "translate(2px,0px)",
-              border: "none",
-              background: "#FF5A33",
+              transform: "translate(1px,0px)",
+              border: "solid",
+              borderWidth: "1px",
+              borderColor: "#e74c3c",
+              background: "#FFFFFF",
+              height: "10px",
+              width: "10px",
             }}
           />
         </Tooltip>

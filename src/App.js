@@ -108,7 +108,7 @@ function App() {
             ...node,
             data: {
               ...node.data,
-              conditions: [],
+              conditions: [{}],
               logic: 1,
               matchHandleId: uuidv4(),
               noMatchHandleId: uuidv4(),
@@ -222,19 +222,24 @@ function App() {
     setOpenConfigDialog(false);
   };
 
-  const saveConditionNodeChanges = (id, data) => {
+  const saveConditionNodeChanges = (data) => {
     setNodes(
       produce(reactFlowInstance.getNodes(), (draft) => {
-        const indexOfNode = draft.findIndex((item, index) => item.id === id);
+        const indexOfNode = draft.findIndex(
+          (item, index) => item.id === configNodeId
+        );
         draft[indexOfNode].data.name = data.name;
+        draft[indexOfNode].data.logic = data.logic;
       })
     );
   };
 
-  const saveActionNodeChanges = (id, data) => {
+  const saveActionNodeChanges = (data) => {
     setNodes(
       produce(reactFlowInstance.getNodes(), (draft) => {
-        const indexOfNode = draft.findIndex((item, index) => item.id === id);
+        const indexOfNode = draft.findIndex(
+          (item, index) => item.id === configNodeId
+        );
         draft[indexOfNode].data.name = data.name;
       })
     );

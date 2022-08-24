@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 import React from "react";
 
-export default (props) => {
+export default function NodesSidebar(props) {
   const onDragStart = (event, nodeType) => {
     event.dataTransfer.setData("application/reactflow", nodeType);
     event.dataTransfer.effectAllowed = "move";
@@ -43,4 +43,4 @@ export default (props) => {
       <Button onClick={props.export}>Export</Button>
     </aside>
   );
-};
+}

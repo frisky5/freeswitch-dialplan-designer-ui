@@ -4,10 +4,10 @@ export default function TextField(props) {
   return (
     <FormControl
       variant="filled"
-      size="small"
       fullWidth
       error={props.error}
       required
+      disabled={props.disabled}
     >
       <InputLabel htmlFor={props.id}>{props.label}</InputLabel>
       <FilledInput

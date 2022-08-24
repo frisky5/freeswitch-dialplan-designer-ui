@@ -2,7 +2,12 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 export default function Dropdown(props) {
   return (
-    <FormControl variant="filled" fullWidth error={props.error} size="small">
+    <FormControl
+      variant="filled"
+      fullWidth
+      error={props.error}
+      disabled={props.disabled}
+    >
       <InputLabel id={props.labelId}>{props.label}</InputLabel>
       <Select
         id={props.selectId}
