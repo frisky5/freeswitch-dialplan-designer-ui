@@ -2,9 +2,8 @@ import { IconButton } from "@mui/material";
 import React from "react";
 import {
   getBezierPath,
-  getEdgeCenter,
-  getMarkerEnd,
-} from "react-flow-renderer";
+
+} from "reactflow";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 const foreignObjectSize = 40;
 
@@ -13,53 +12,31 @@ const onEdgeClick = (evt, id) => {
   alert(`remove ${id}`);
 };
 
-export default function EdgeWithDeleteButton({
-  id,
-  sourceX,
-  sourceY,
-  targetX,
-  targetY,
-  sourcePosition,
-  targetPosition,
-  style = {},
-  markerEnd,
-  data,
-}) {
-  const edgePath = getBezierPath({
-    sourceX,
-    sourceY,
-    sourcePosition,
-    targetX,
-    targetY,
-    targetPosition,
-  });
-  const [edgeCenterX, edgeCenterY] = getEdgeCenter({
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
-  });
+export default function EdgeWithDeleteButton(props) {
+  const edgePath = getBezierPath(props);
+
+  const [path, labelX, labelY] = getBezierPath(props);
 
   return (
     <>
       <path
-        id={id}
-        style={style}
+        id={props.id}
+        style={props.style}
         className="react-flow__edge-path"
         d={edgePath}
-        markerEnd={markerEnd}
+        markerEnd={props.markerEnd}
       />
       <foreignObject
         width={50}
         height={50}
-        x={edgeCenterX - foreignObjectSize / 2}
-        y={edgeCenterY - foreignObjectSize / 2}
+        x={labelX - foreignObjectSize / 2}
+        y={labelY - foreignObjectSize / 2}
       >
         <IconButton
           size="small"
           style={{ color: "#000", background: "#FFF", marginTop: 5 }}
           onClick={() => {
-            data.askDeleteEdge(id);
+            props.data.askDeleteEdge(props.id);
           }}
         >
           <HighlightOffIcon fontSize="small" />

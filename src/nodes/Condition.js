@@ -9,7 +9,7 @@ import {
   IconButton,
   Stack,
 } from "@mui/material";
-import { Handle, useUpdateNodeInternals } from "react-flow-renderer";
+import { Handle, useUpdateNodeInternals } from "reactflow";
 import GenericAccordion from "../components/GenericAccordion";
 import TextField from "../components/TextField";
 import Dropdown from "../components/Dropdown";

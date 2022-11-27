@@ -1,7 +1,7 @@
 import { Box, Button, Tooltip, Typography } from "@mui/material";
 import { memo } from "react";
 
-import { Handle } from "react-flow-renderer";
+import { Handle } from "reactflow";
 
 const handleWrapperStyle = {
   display: "flex",

@@ -12,7 +12,7 @@ import React, { memo, useEffect, useState } from "react";
 import GenericAccordion from "../components/GenericAccordion";
 import TextField from "../components/TextField";
 
-import { Handle, useUpdateNodeInternals } from "react-flow-renderer";
+import { Handle, useUpdateNodeInternals } from "reactflow";
 import { v4 as uuidv4 } from "uuid";
 
 const handleWrapperStyle = {

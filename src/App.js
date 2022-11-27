@@ -8,7 +8,7 @@ import ReactFlow, {
   ReactFlowProvider,
   useEdgesState,
   useNodesState,
-} from "react-flow-renderer";
+} from "reactflow";
 import { v4 as uuidv4 } from "uuid";
 import DeleteConfirmation from "./components/DeleteConfirmation";
 import NodesSidebar from "./components/NodesSidebar";

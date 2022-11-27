@@ -1,7 +1,7 @@
 import { Box, Tooltip, Typography } from "@mui/material";
 import React, { memo, useEffect, useState } from "react";
 
-import { Handle, useUpdateNodeInternals } from "react-flow-renderer";
+import { Handle, useUpdateNodeInternals } from "reactflow";
 import GenericAccordion from "../components/GenericAccordion";
 import TextField from "../components/TextField";
 
