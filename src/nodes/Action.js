@@ -1,98 +1,56 @@
-import { Box, Tooltip, Typography } from "@mui/material";
+import { Box, Button, Tooltip, Typography } from "@mui/material";
 import React, { memo, useEffect, useState } from "react";
 
 import { Handle, useUpdateNodeInternals } from "reactflow";
 import GenericAccordion from "../components/GenericAccordion";
 import TextField from "../components/TextField";
 
-export default memo(({ id, selected, data }) => {
+export default memo(({ id, type, data }) => {
   const [expandedConfig, setExpandedConfig] = useState(false);
   const [name, setName] = useState(data.name);
 
   return (
-    <div
-      style={{
-        height: "100%",
-        boxShadow: selected
-          ? "rgba(90,255,21,1) 0px 2px 4px 0px, rgba(90,255,21,1) 0px 2px 16px 0px"
-          : "",
-        borderRadius: "7px 7px",
-        border: "none",
-      }}
-    >
+    <React.Fragment>
       <Box
         className="custom-drag-handle"
         style={{
-          borderTopLeftRadius: "7px",
-          borderTopRightRadius: "7px",
-          background: "#2ecc71",
-          height: "35px",
+          height: "27px",
+          borderBottom: "2px solid",
+          borderColor: "inherit"
         }}
       >
         <Typography
-          style={{ padding: "5px", paddingLeft: "15px", color: "black" }}
+          align="center"
         >
           Action
         </Typography>
       </Box>
-      <Box p={2}>
-        <GenericAccordion
-          expanded={expandedConfig}
-          onChange={() => {
-            setExpandedConfig(!expandedConfig);
-          }}
-          title={"Configuration"}
-          config
-          onDelete={() => {
-            data.askDeleteNode(id);
-          }}
-          onSave={() => {
-            data.saveActionChanges();
+      <Box padding={2}>
+        <Button
+          variant={"contained"}
+          style={{ background: "#2ecc71", }}
+          size="small"
+          onClick={() => {
+            data.openConfig(id, type);
           }}
         >
-          <TextField
-            id={"a" + id}
-            label="Name"
-            type="text"
-            value={name}
-            onChange={(value) => {
-              setName(value);
-            }}
-            error={name !== data.name}
-          />
-        </GenericAccordion>
-        <Tooltip title="Input" arrow disableInteractive>
-          <Handle
-            id={data.inputHandleId}
-            type="target"
-            position="left"
-            style={{
-              transform: "translate(-1px,0px)",
-              border: "solid",
-              borderWidth: "1px",
-              borderColor: "#e74c3c",
-              background: "#FFFFFF",
-              height: "10px",
-              width: "10px",
-            }}
-          />
-        </Tooltip>
-        <Tooltip title="Output" arrow disableInteractive>
-          <Handle
-            id={data.outputHandleId}
-            position="right"
-            style={{
-              transform: "translate(1px,0px)",
-              border: "solid",
-              borderWidth: "1px",
-              borderColor: "#e74c3c",
-              background: "#FFFFFF",
-              height: "10px",
-              width: "10px",
-            }}
-          />
-        </Tooltip>
+          Edit
+        </Button>
       </Box>
-    </div>
+      <Handle
+        id={data.inputHandleId}
+        type="target"
+        position="left"
+      />
+      <div className="right_handles_wrapper">
+        <Handle
+          id={data.nextExtensionHandleId}
+          position="right"
+          style={{
+            marginTop: "12px"
+          }}
+        />
+      </div>
+    </React.Fragment>
   );
 });

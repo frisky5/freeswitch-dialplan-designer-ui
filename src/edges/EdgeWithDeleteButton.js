@@ -29,18 +29,15 @@ export default function EdgeWithDeleteButton(props) {
       <foreignObject
         width={50}
         height={50}
-        x={labelX - foreignObjectSize / 2}
-        y={labelY - foreignObjectSize / 2}
+        x={labelX}
+        y={labelY - 12}
       >
-        <IconButton
-          size="small"
-          style={{ color: "#000", background: "#FFF", marginTop: 5 }}
+        <HighlightOffIcon
           onClick={() => {
             props.data.askDeleteEdge(props.id);
           }}
-        >
-          <HighlightOffIcon fontSize="small" />
-        </IconButton>
+
+          style={{ color: "#e74c3c" }} />
       </foreignObject>
     </>
   );

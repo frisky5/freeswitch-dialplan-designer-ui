@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
-import TextField from "./TextField";
-import Dropdown from "./Dropdown";
+import TextField from "../../TextField";
+import Dropdown from "../../Dropdown";
 import {
   Divider,
   Grid,
@@ -15,12 +15,12 @@ import {
   conditionLogicTypes,
   conditionTypes,
   callerProfileVariables,
-} from "../constants";
+} from "../../../constants";
 import { v4 as uuidv4 } from "uuid";
 import produce from "immer";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 
-export default function ConditionConfiguration(props) {
+export default function Condition(props) {
   const [saving, setSaving] = useState(false);
   const [name, setName] = useState(props.nodeData.name);
   const [logic, setLogic] = useState(props.nodeData.logic);
@@ -93,15 +93,15 @@ export default function ConditionConfiguration(props) {
                   />
                 </Grid>
                 {conditions[0] != null &&
-                conditions[0].type != null &&
-                conditions[0].type === 1 ? (
+                  conditions[0].type != null &&
+                  conditions[0].type === 1 ? (
                   <Fragment>
                     <Grid item xs={6}>
                       <Box display={"flex"}>
                         <Autocomplete
                           value={
                             conditions[0] != null &&
-                            conditions[0].variable != null
+                              conditions[0].variable != null
                               ? conditions[0].variable
                               : null
                           }

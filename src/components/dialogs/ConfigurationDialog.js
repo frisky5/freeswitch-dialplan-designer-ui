@@ -7,8 +7,8 @@ import {
   DialogTitle,
   Typography,
 } from "@mui/material";
-import ExtensionConfiguration from "./ExtensionConfiguration";
-import ConditionConfiguration from "./ConditionConfiguration";
+import Extension from "./specifics/Extension";
+import Condition from "./specifics/Condition";
 
 export default function ConfigurationDialog(props) {
   const [disable, setDisable] = useState(false);
@@ -24,7 +24,7 @@ export default function ConfigurationDialog(props) {
       <DialogTitle>Configuration</DialogTitle>
       <DialogContent>
         {props.type === "extension" && (
-          <ExtensionConfiguration
+          <Extension
             triggerSave={triggerSave}
             nodeId={props.nodeId}
             nodeData={props.nodeData}
@@ -35,7 +35,7 @@ export default function ConfigurationDialog(props) {
           />
         )}
         {props.type === "condition" && (
-          <ConditionConfiguration
+          <Condition
             triggerSave={triggerSave}
             nodeId={props.nodeId}
             nodeData={props.nodeData}

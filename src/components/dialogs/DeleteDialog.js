@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 
-export default function DeleteConfirmation(props) {
+export default function DeleteDialog(props) {
   return (
     <Dialog open={props.open}>
       <DialogTitle>Delete Confirmation</DialogTitle>

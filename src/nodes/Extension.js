@@ -1,104 +1,66 @@
 import { Box, Button, Tooltip, Typography } from "@mui/material";
-import { memo } from "react";
+import React, { memo } from "react";
 
 import { Handle } from "reactflow";
 
-const handleWrapperStyle = {
-  display: "flex",
-  position: "absolute",
-  height: "100%",
-  right: 0,
-  top: 0,
-  flexDirection: "column",
-  justifyContent: "space-between",
-  paddingTop: "45px",
-  paddingBottom: "20px",
-};
 
-export default memo(({ id, selected, data }) => {
+export default memo(({ id, type, data }) => {
   return (
-    <div
-      style={{
-        borderRadius: "9px",
-        height: "100%",
-        boxShadow: selected
-          ? "#B4CF66 0px 2px 4px 0px, #B4CF66 0px 2px 16px 0px"
-          : "",
-      }}
-    >
+    <React.Fragment>
       <Box
         className="custom-drag-handle"
         style={{
-          borderTopLeftRadius: "9px",
-          borderTopRightRadius: "9px",
-          background: "#146152",
-          height: "35px",
+          height: "27px",
+          borderBottom: "2px solid",
+          borderColor: "inherit"
         }}
       >
         <Typography
-          style={{ padding: "5px", paddingLeft: "15px", color: "white" }}
+          align="center"
         >
           Extension
         </Typography>
       </Box>
       <Box padding={2}>
-        <Tooltip title={data.name} arrow disableInteractive>
-          <Button
-            fullWidth
-            variant={"outlined"}
-            style={{ color: "white", background: "#146152", border: "none" }}
-            onClick={() => {
-              data.openConfig(id, "extension");
-            }}
-          >
-            Configure
-          </Button>
-        </Tooltip>
-      </Box>
-      <Tooltip title="Input" arrow disableInteractive>
-        <Handle
-          id={data.inputHandleId}
-          type="target"
-          position="left"
-          style={{
-            border: "none",
-            background: "#FF5A33",
-            transform: "translate(-1.4px,0px)",
+        <Button
+          variant={"contained"}
+          style={{ background: "#3498db" }}
+          size="small"
+          onClick={() => {
+            data.openConfig(id, type);
           }}
-        />
-      </Tooltip>
-      <div style={handleWrapperStyle}>
-        <Tooltip title="Extension content" arrow disableInteractive>
+        >
+          Edit
+        </Button>
+      </Box>
+      <Handle
+        id={data.inputHandleId}
+        type="target"
+        position="left"
+      />
+      <div className="right_handles_wrapper">
+        <Tooltip
+          title="Extension content"
+          arrow
+          disableInteractive
+        >
           <Handle
             id={data.extensionContentHandleId}
             position="right"
-            style={{
-              position: "relative",
-              top: "auto",
-              border: "none",
-              background: "#FF5A33",
-              transform: "translate(1.4px,0px)",
-            }}
           />
         </Tooltip>
         <Tooltip
-          title="No Match, Connect to Extension"
+          title="Next Extension"
           arrow
           disableInteractive
         >
           <Handle
             id={data.nextExtensionHandleId}
             position="right"
-            style={{
-              position: "relative",
-              top: "auto",
-              border: "none",
-              background: "#FF5A33",
-              transform: "translate(1.4px,0px)",
-            }}
+
           />
         </Tooltip>
       </div>
-    </div>
+    </React.Fragment>
   );
 });

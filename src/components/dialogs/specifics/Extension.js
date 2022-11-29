@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import TextField from "./TextField";
-export default function ExtensionConfiguration(props) {
+import TextField from "../../TextField";
+
+export default function Extension(props) {
   const [name, setName] = useState(props.nodeData.name);
 
   useEffect(() => {

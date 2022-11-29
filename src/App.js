@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from "react";
-import { CssBaseline } from "@mui/material";
-import { SmartStepEdge } from "@tisoap/react-flow-smart-edge";
+import { CssBaseline, LinearProgress } from "@mui/material";
 import produce from "immer";
+
 import ReactFlow, {
   addEdge,
   Controls,
@@ -9,8 +9,10 @@ import ReactFlow, {
   useEdgesState,
   useNodesState,
 } from "reactflow";
+import 'reactflow/dist/style.css';
+
 import { v4 as uuidv4 } from "uuid";
-import DeleteConfirmation from "./components/DeleteConfirmation";
+import DeleteDialog from "./components/dialogs/DeleteDialog";
 import NodesSidebar from "./components/NodesSidebar";
 import EdgeWithDeleteButton from "./edges/EdgeWithDeleteButton";
 import "./index.css";
@@ -20,26 +22,29 @@ import Extension from "./nodes/Extension";
 import IvrMenu from "./nodes/IvrMenu";
 import Start from "./nodes/Start";
 import { conditionLogicTypes } from "./constants";
-import ConfigurationDialog from "./components/ConfigurationDialog";
+import ConfigurationDialog from "./components/dialogs/ConfigurationDialog";
 
 const nodeTypes = {
-  ivrMenu: IvrMenu,
   start: Start,
   extension: Extension,
   condition: Condition,
   action: Action,
+  ivrMenu: IvrMenu,
 };
 
 const edgeTypes = {
-  smart: SmartStepEdge,
   edgeWithDeleteButton: EdgeWithDeleteButton,
 };
 
 function App() {
+
   const reactFlowWrapper = useRef(null);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
+
+  //object holding the nodes in the dialplan flow
   const [nodes, setNodes, onNodesChange] = useNodesState([
     {
+      //first node in any dialplan flow, do not modify this
       id: uuidv4(),
       type: "start",
       draggable: false,
@@ -48,14 +53,22 @@ function App() {
       data: { handleId: uuidv4() },
     },
   ]);
+
+  //object holding the edges connected between the nodes in the dialplan flow
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-  const [deleteTarget, setDeleteTarget] = useState("");
+  //object holds the ID of a edge/node when a delete button is pressed
+  const [deleteTargetId, setDeleteTargetId] = useState("");
+  //object holds the type of item to delete, is  it node or edge
   const [deleteType, setDeleteType] = useState("");
+  //object to control the deletion dialog opened state
   const [openDeletConfirmation, setOpenDeleteConfirmation] = useState(false);
-  //node configuration states
+
+  //object to control the configuration dialog opened state
   const [openConfigDialog, setOpenConfigDialog] = useState(false);
+  //object holds the node id where configuration button was pressed
   const [configNodeId, setConfigNodeId] = useState("");
+
   const [configNodeType, setConfigNodeType] = useState("");
   const [configNodeData, setConfigNodeData] = useState({});
 
@@ -82,6 +95,7 @@ function App() {
         type,
         position,
         dragHandle: ".custom-drag-handle",
+        selectable: true,
         data: {
           name: "",
           inputHandleId: uuidv4(),
@@ -146,7 +160,7 @@ function App() {
           break;
       }
     },
-    [reactFlowInstance]
+    [reactFlowInstance, setNodes]
   );
 
   // trigger on nodes connection
@@ -159,8 +173,8 @@ function App() {
           type: "edgeWithDeleteButton",
           selected: false,
           markerEnd: {
-            height: "25px",
-            width: "25px",
+            height: "20px",
+            width: "20px",
             type: "arrow",
             color: "black",
             orient: 0,
@@ -172,12 +186,12 @@ function App() {
         eds
       )
     );
-  }, []);
+  }, [setEdges]);
 
   //Node and Edges Deletion
   const askDeleteNode = (nodeId) => {
     setDeleteType("node");
-    setDeleteTarget(nodeId);
+    setDeleteTargetId(nodeId);
     setOpenDeleteConfirmation(true);
   };
 
@@ -191,7 +205,7 @@ function App() {
 
   const askDeleteEdge = (edgeId) => {
     setDeleteType("edge");
-    setDeleteTarget(edgeId);
+    setDeleteTargetId(edgeId);
     setOpenDeleteConfirmation(true);
   };
 
@@ -248,17 +262,17 @@ function App() {
   return (
     <div className="dndflow">
       <CssBaseline />
-      <DeleteConfirmation
-        id={deleteTarget}
+      <DeleteDialog
+        id={deleteTargetId}
         deleteType={deleteType}
         open={openDeletConfirmation}
         yes={() => {
           switch (deleteType) {
             case "node":
-              deleteNode(deleteTarget);
+              deleteNode(deleteTargetId);
               break;
             case "edge":
-              deleteEdge(deleteTarget);
+              deleteEdge(deleteTargetId);
               break;
             default:
               break;
@@ -290,6 +304,7 @@ function App() {
           ref={reactFlowWrapper}
           style={{ height: "99vh", width: "99vw" }}
         >
+          <LinearProgress />
           <ReactFlow
             nodeTypes={nodeTypes}
             nodes={nodes}
@@ -313,6 +328,7 @@ function App() {
           }}
         />
       </ReactFlowProvider>
+
     </div>
   );
 }

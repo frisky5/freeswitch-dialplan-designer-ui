@@ -1,41 +1,83 @@
-.react-flow__node {
-  background-color: white;
+.dndflow {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 100%;
 }
 
-.react-flow__node-start {
-  background-color: white;
-  width: 40px;
-  min-height: 40px;
-  border-radius: 50%;
-  border: none;
+.dndflow .reactflow-wrapper {
+  flex-grow: 1;
+  height: 100%;
 }
+
+.react-flow__renderer{
+  background-color: #ecf0f1;
+}
+
+.react-flow__edge-path{
+  color:white;
+  background-color: white;
+  
+}
+.react-flow__node.selected{
+
+}
+
 .react-flow__node-extension {
-  width: 150px;
-  max-width: 500px;
+  background-color: #ecf0f1;
+  border-radius: 9px;
+  border: 2px solid;
+  border-color: #3498db;
 }
 
 .react-flow__node-condition {
-  width: 150px;
-  max-width: 500px;
+  background-color: #ecf0f1;
+  border-radius: 9px;
+  border: 2px solid;
+  border-color: #f1c40f;
 }
+
 .react-flow__node-action {
-  width: 500px;
-  max-width: 500px;
-  border: solid;
+  background-color: #ecf0f1;
+  border-radius: 9px;
+  border: 2px solid;
   border-color: #2ecc71;
-  border-radius: 9px 9px;
-  border-width: 1px;
 }
+
+.react-flow__node-start {
+  background-color: transparent;
+  height: 75px;
+  width: 75px;
+  border-radius: 50%;
+  border: none;
+}
+
+
 .react-flow__node-ivrMenu {
   width: 500px;
   max-width: 500px;
 }
-.dndflow {
-  flex-direction: column;
-  display: flex;
-  flex-grow: 1;
-  height: 100%;
+
+.react-flow__handle-left {
+  border: none;
+  background: #fd1c03;
+  width: 7px;
+  height: 7px;
+  padding-left: 2px;
+  transform: translate(0px, 7px);
 }
+
+.react-flow__handle-right {
+  position: relative;
+  top: auto;
+  border: none;
+  width: 7px;
+  height: 7px;
+  background: #fd1c03;
+  transform: translate(0px, 0px);
+}
+
+
 
 .dndflow aside {
   border-right: 1px solid #eee;
@@ -60,15 +102,23 @@
   cursor: grab;
 }
 
-.dndflow .reactflow-wrapper {
-  flex-grow: 1;
-  height: 100%;
-}
+
 
 .dndflow .selectall {
   margin-top: 10px;
 }
 
+.right_handles_wrapper{
+    right: 0;
+    top: 0;
+    display: flex;
+    position: absolute;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-top: 40px;
+    padding-bottom: 12px;
+}
 @media screen and (min-width: 768px) {
   .dndflow {
     flex-direction: row;
