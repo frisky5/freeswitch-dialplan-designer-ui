@@ -1,13 +1,16 @@
-import { Box, IconButton, Typography } from "@mui/material";
 import React, { memo } from "react";
-
-import { Handle } from "reactflow";
-
-
+import {
+  Box,
+  Tooltip,
+  Typography,
+  IconButton,
+} from "@mui/material";
+import { Handle, } from "reactflow";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
-export default memo(({ id, type, data }) => {
+export default memo(({ data, id, type, selected }) => {
+
   return (
     <React.Fragment>
       <Box
@@ -16,14 +19,12 @@ export default memo(({ id, type, data }) => {
           height: "27px",
           borderBottom: "2px solid",
           borderColor: "inherit",
-          marginRight: "5px",
-          marginLeft: "5px"
+          marginRight: "10px",
+          marginLeft: "10px"
         }}
       >
-        <Typography
-          align="center"
-        >
-          Action
+        <Typography align="center">
+          Single Condition
         </Typography>
       </Box>
       <Box padding={2} style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
@@ -54,13 +55,20 @@ export default memo(({ id, type, data }) => {
         position="left"
       />
       <div className="right_handles_wrapper">
-        <Handle
-          id={data.nextExtensionHandleId}
-          position="right"
-          style={{
-            marginTop: "12px"
-          }}
-        />
+        <Tooltip title="Match" arrow disableInteractive>
+          <Handle
+            id={data.matchHandleId}
+            position="right"
+            style={{ backgroundColor: "#2ecc71" }}
+          />
+        </Tooltip>
+        <Tooltip title="No Match" arrow disableInteractive>
+          <Handle
+            id={data.noMatchHandleId}
+            position="right"
+
+          />
+        </Tooltip>
       </div>
     </React.Fragment>
   );

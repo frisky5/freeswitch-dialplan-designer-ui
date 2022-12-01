@@ -37,7 +37,7 @@ export default function EdgeWithDeleteButton(props) {
             props.data.askDeleteEdge(props.id);
           }}
 
-          style={{ color: "#e74c3c" }} />
+          style={{ color: "#e74c3c", backgroundColor: "#ecf0f1" }} />
       </foreignObject>
     </>
   );

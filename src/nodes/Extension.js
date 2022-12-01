@@ -1,10 +1,17 @@
-import { Box, Button, Tooltip, Typography } from "@mui/material";
-import React, { memo } from "react";
-
-import { Handle } from "reactflow";
-
+import React, { memo, useEffect } from "react";
+import { Box, IconButton, Tooltip, Typography } from "@mui/material";
+import { Handle, useUpdateNodeInternals } from "reactflow";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 export default memo(({ id, type, data }) => {
+
+  const updateNodeInternals = useUpdateNodeInternals();
+
+  useEffect(() => {
+    updateNodeInternals(id);
+  }, []);
+
   return (
     <React.Fragment>
       <Box
@@ -12,26 +19,40 @@ export default memo(({ id, type, data }) => {
         style={{
           height: "27px",
           borderBottom: "2px solid",
-          borderColor: "inherit"
+          borderColor: "inherit",
+          marginRight: "5px",
+          marginLeft: "5px"
         }}
       >
-        <Typography
-          align="center"
-        >
-          Extension
-        </Typography>
+        <Tooltip title={data.name} arrow>
+          <Typography
+            align="center"
+          >
+            Extension
+          </Typography>
+        </Tooltip>
       </Box>
-      <Box padding={2}>
-        <Button
+      <Box padding={2} style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+        <IconButton
           variant={"contained"}
-          style={{ background: "#3498db" }}
+          style={{ background: "#2ecc71", color: 'white' }}
           size="small"
           onClick={() => {
             data.openConfig(id, type);
           }}
         >
-          Edit
-        </Button>
+          <EditIcon fontSize="small" />
+        </IconButton>
+        <IconButton
+          variant={"contained"}
+          style={{ background: "#e74c3c", color: 'white' }}
+          size="small"
+          onClick={() => {
+            data.openDeleteNode(id);
+          }}
+        >
+          <DeleteForeverIcon fontSize="small" />
+        </IconButton>
       </Box>
       <Handle
         id={data.inputHandleId}
@@ -47,6 +68,7 @@ export default memo(({ id, type, data }) => {
           <Handle
             id={data.extensionContentHandleId}
             position="right"
+            style={{ backgroundColor: "#2ecc71" }}
           />
         </Tooltip>
         <Tooltip
@@ -57,7 +79,6 @@ export default memo(({ id, type, data }) => {
           <Handle
             id={data.nextExtensionHandleId}
             position="right"
-
           />
         </Tooltip>
       </div>

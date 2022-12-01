@@ -11,7 +11,6 @@ export default function TextField(props) {
     >
       <InputLabel htmlFor={props.id}>{props.label}</InputLabel>
       <FilledInput
-        id={props.id}
         fullWidth
         value={props.value}
         onChange={(e) => {

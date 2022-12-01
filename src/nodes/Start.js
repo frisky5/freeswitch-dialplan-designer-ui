@@ -18,13 +18,7 @@ export default memo(({ data, isConnectable }) => {
         position="right"
         isConnectable={isConnectable}
         style={{
-          position: "relative",
-          top: "auto",
-          border: "none",
-          width: "8px",
-          height: "8px",
-          background: "#fd1c03",
-          transform: "translate(68px, -41.5px)"
+          transform: "translate(70px, -43px)"
         }}
       />
     </React.Fragment>

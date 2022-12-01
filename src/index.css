@@ -10,17 +10,15 @@
   height: 100%;
 }
 
-.react-flow__renderer{
+.react-flow__renderer {
   background-color: #ecf0f1;
 }
 
-.react-flow__edge-path{
-  color:white;
+.react-flow__edge-path {
+  color: white;
   background-color: white;
-  
 }
-.react-flow__node.selected{
-
+.react-flow__node.selected {
 }
 
 .react-flow__node-extension {
@@ -30,7 +28,7 @@
   border-color: #3498db;
 }
 
-.react-flow__node-condition {
+.react-flow__node-singleCondition {
   background-color: #ecf0f1;
   border-radius: 9px;
   border: 2px solid;
@@ -52,7 +50,6 @@
   border: none;
 }
 
-
 .react-flow__node-ivrMenu {
   width: 500px;
   max-width: 500px;
@@ -60,24 +57,23 @@
 
 .react-flow__handle-left {
   border: none;
-  background: #fd1c03;
-  width: 7px;
-  height: 7px;
-  padding-left: 2px;
-  transform: translate(0px, 7px);
+  background-color: #c0392b;
+  width: 6px;
+  height: 12px;
+  transform: translate(-4px, 7px);
+  border-radius: 10rem 0 0 10rem;
 }
 
 .react-flow__handle-right {
   position: relative;
   top: auto;
   border: none;
-  width: 7px;
-  height: 7px;
-  background: #fd1c03;
-  transform: translate(0px, 0px);
+  width: 6px;
+  height: 12px;
+  background: #c0392b;
+  transform: translate(4px, 0px);
+  border-radius: 0 10rem 10rem 0;
 }
-
-
 
 .dndflow aside {
   border-right: 1px solid #eee;
@@ -102,22 +98,20 @@
   cursor: grab;
 }
 
-
-
 .dndflow .selectall {
   margin-top: 10px;
 }
 
-.right_handles_wrapper{
-    right: 0;
-    top: 0;
-    display: flex;
-    position: absolute;
-    height: 100%;
-    flex-direction: column;
-    justify-content: space-between;
-    padding-top: 40px;
-    padding-bottom: 12px;
+.right_handles_wrapper {
+  right: 0;
+  top: 0;
+  display: flex;
+  position: absolute;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: 40px;
+  padding-bottom: 12px;
 }
 @media screen and (min-width: 768px) {
   .dndflow {

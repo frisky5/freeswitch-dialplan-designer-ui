@@ -28,16 +28,16 @@ export default function NodesSidebar(props) {
         </div>
 
         <div
-          className="react-flow__node-condition"
+          className="react-flow__node-singleCondition"
           style={{ height: "50px", cursor: "grab" }}
-          onDragStart={(event) => onDragStart(event, "condition")}
+          onDragStart={(event) => onDragStart(event, "singleCondition")}
           draggable
         >
           <Typography
             align="center"
-            onDragStart={(event) => onDragStart(event, "condition")}
+            onDragStart={(event) => onDragStart(event, "singleCondition")}
           >
-            Condition
+            Single Condition
           </Typography>
         </div>
         <div

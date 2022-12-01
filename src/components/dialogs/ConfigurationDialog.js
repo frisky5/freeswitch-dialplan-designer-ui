@@ -8,12 +8,39 @@ import {
   Typography,
 } from "@mui/material";
 import Extension from "./specifics/Extension";
-import Condition from "./specifics/Condition";
+import SingleCondtion from "./specifics/SingleCondition";
 
 export default function ConfigurationDialog(props) {
   const [disable, setDisable] = useState(false);
   const [loading, setLoading] = useState(false);
   const [triggerSave, setTriggerSave] = useState(false);
+
+  function selectConfigType() {
+    switch (props.data.nodeType) {
+      case "extension":
+        return <Extension
+          triggerSave={triggerSave}
+          data={props.data}
+          save={(data) => {
+            props.save(data);
+            setTriggerSave(false);
+          }}
+          cancelSave={() => { setTriggerSave(false) }}
+        />
+      case "singleCondition":
+        return <SingleCondtion
+          triggerSave={triggerSave}
+          data={props.data}
+          save={(data) => {
+            props.save(data);
+            setTriggerSave(false);
+          }}
+          cancelSave={() => { setTriggerSave(false) }}
+        />
+
+      default: return null
+    }
+  }
 
   return (
     <Dialog
@@ -23,34 +50,13 @@ export default function ConfigurationDialog(props) {
     >
       <DialogTitle>Configuration</DialogTitle>
       <DialogContent>
-        {props.type === "extension" && (
-          <Extension
-            triggerSave={triggerSave}
-            nodeId={props.nodeId}
-            nodeData={props.nodeData}
-            save={(data) => {
-              props.saveExtensionNodeChanges(data);
-              setTriggerSave(false);
-            }}
-          />
-        )}
-        {props.type === "condition" && (
-          <Condition
-            triggerSave={triggerSave}
-            nodeId={props.nodeId}
-            nodeData={props.nodeData}
-            save={(data) => {
-              props.saveConditionNodeChanges(data);
-              setTriggerSave(false);
-            }}
-          />
-        )}
+        {selectConfigType()}
       </DialogContent>
       <DialogActions>
         <Button
           variant="text"
           disabled={disable}
-          style={{ color: "green" }}
+          color="primary"
           onClick={() => {
             setTriggerSave(true);
           }}
@@ -59,21 +65,13 @@ export default function ConfigurationDialog(props) {
         </Button>
         <Button
           variant="text"
-          style={{ color: "orange" }}
+          disabled={disable}
+          color="secondary"
           onClick={() => {
             props.close();
           }}
         >
           cancel
-        </Button>
-        <Button
-          variant="text"
-          style={{ color: "red" }}
-          onClick={() => {
-            props.askDeleteNode(props.nodeId);
-          }}
-        >
-          delete
         </Button>
       </DialogActions>
     </Dialog>
