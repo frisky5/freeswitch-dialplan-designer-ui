@@ -1,6 +1,6 @@
 import React, { memo, useEffect } from "react";
 import { Box, IconButton, Tooltip, Typography } from "@mui/material";
-import { Handle, useUpdateNodeInternals, Position } from "reactflow";
+import { Handle, useUpdateNodeInternals, } from "reactflow";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
@@ -24,7 +24,7 @@ export default memo(({ id, type, data }) => {
         className={"red_left_handle"}
         style={{
           top: "55%",
-          left: 0
+
         }} />
       <Tooltip title={data.name} arrow>
         <div
@@ -36,11 +36,11 @@ export default memo(({ id, type, data }) => {
           }}
         >
           <Typography align="center" variant="h6">
-            Extension
+            EXTENSION
           </Typography>
         </div>
       </Tooltip>
-      <Box style={{ paddingTop: 20, paddingBottom: 20, paddingLeft: 25, paddingRight: 25, display: "flex", gap: 15, justifyContent: "center" }}>
+      <Box style={{ paddingTop: 20, paddingBottom: 20, paddingLeft: 35, paddingRight: 35, display: "flex", justifyContent: "center" }}>
         <IconButton
           variant={"contained"}
           style={{ background: "#2ecc71", color: 'white' }}
@@ -49,15 +49,6 @@ export default memo(({ id, type, data }) => {
           }}
         >
           <EditIcon />
-        </IconButton>
-        <IconButton
-          variant={"contained"}
-          style={{ background: "#e74c3c", color: 'white' }}
-          onClick={() => {
-            data.openDeleteNode(id);
-          }}
-        >
-          <DeleteForeverIcon />
         </IconButton>
       </Box>
       <Tooltip
@@ -71,7 +62,7 @@ export default memo(({ id, type, data }) => {
           className={"red_right_handle"}
           style={{
             top: "50%",
-            right: 0
+
           }}
         />
       </Tooltip>
@@ -86,7 +77,7 @@ export default memo(({ id, type, data }) => {
           className={"red_right_handle"}
           style={{
             top: "80%",
-            right: 0
+
           }}
         />
       </Tooltip>

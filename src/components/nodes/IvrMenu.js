@@ -9,8 +9,8 @@ import {
 } from "@mui/material";
 import { Stack } from "@mui/system";
 import React, { memo, useEffect, useState } from "react";
-import GenericAccordion from "../components/GenericAccordion";
-import TextField from "../components/TextField";
+import GenericAccordion from "../GenericAccordion";
+import TextField from "../TextField";
 
 import { Handle, useUpdateNodeInternals } from "reactflow";
 import { v4 as uuidv4 } from "uuid";

@@ -10,7 +10,7 @@ export default memo(({ data, isConnectable }) => {
       style={{
         display: "flex",
         flexDirection: "column",
-        backgroundColor: "#ecf0f1",
+        backgroundColor: "#2ecc71",
         border: "solid 2px",
         borderRadius: "9px",
         borderColor: "#27ae60",
@@ -25,11 +25,11 @@ export default memo(({ data, isConnectable }) => {
         isConnectable={isConnectable}
         className={"red_right_handle"}
         style={{
-          right: 0
+
         }}
       />
-      <Typography align="center" variant="h6" style={{ paddingTop: 8, paddingBottom: 8, paddingLeft: 25, paddingRight: 25 }}>
-        Start
+      <Typography align="center" variant="h6" style={{ color: "white", paddingTop: 8, paddingBottom: 8, paddingLeft: 25, paddingRight: 25 }}>
+        START
       </Typography>
     </div>
   );

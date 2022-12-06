@@ -1,5 +1,11 @@
 import React, { useCallback, useRef, useState } from "react";
-import { Container, CssBaseline, LinearProgress } from "@mui/material";
+import {
+  Container,
+  createTheme,
+  CssBaseline,
+  LinearProgress,
+  ThemeProvider,
+} from "@mui/material";
 import produce from "immer";
 
 import ReactFlow, {
@@ -10,27 +16,47 @@ import ReactFlow, {
   useEdgesState,
   useNodesState,
 } from "reactflow";
-import 'reactflow/dist/style.css';
+import "reactflow/dist/style.css";
 
 import { v4 as uuidv4 } from "uuid";
-import Delete from "./components/dialogs/Delete";
 import "./index.css";
-import Action from "./nodes/Action";
-import SingleCondition from "./nodes/SingleCondtion";
-import Extension from "./nodes/Extension";
-import IvrMenu from "./nodes/IvrMenu";
-import Start from "./nodes/Start";
+import Action from "./components/nodes/Action";
+import Condition from "./components/nodes/Condition";
+import Extension from "./components/nodes/Extension";
+import IvrMenu from "./components/nodes/IvrMenu";
+import Start from "./components/nodes/Start";
 import Configuration from "./components/dialogs/Configuration";
-import AppBarAndNodesDrawer from "./components/AppBarAndNodesDrawer";
+import AppBarAndNodesDrawer from "./components/TopBarAndNodesDrawer";
+import ralewayFont from "./assests/fonts/raleway.ttf";
+import { SnackbarProvider } from "notistack";
 
 const nodeTypes = {
-  start: Start,
-  extension: Extension,
-  singleCondition: SingleCondition,
-  action: Action,
+  Start: Start,
+  Extension: Extension,
+  Condition: Condition,
+  Action: Action,
   ivrMenu: IvrMenu,
 };
 
+const theme = createTheme({
+  typography: {
+    fontFamily: "Raleway, Arial",
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: `
+        @font-face {
+          font-family: 'Raleway';
+          font-style: normal;
+          font-display: swap;
+          font-weight: 400;
+          src: local('Raleway'), local('Raleway-Regular'), url(${ralewayFont}) format('ttf');
+          unicodeRange: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF;
+        }
+      `,
+    },
+  },
+});
 
 function App() {
   const reactFlowWrapper = useRef(null);
@@ -39,7 +65,7 @@ function App() {
     {
       //first node in any dialplan flow, do not modify this
       id: uuidv4(),
-      type: "start",
+      type: "Start",
       draggable: false,
       selectable: false,
       position: { x: 15, y: 20 },
@@ -47,11 +73,7 @@ function App() {
     },
   ]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [deleteTargetId, setDeleteTargetId] = useState("");
-  const [deleteType, setDeleteType] = useState("")
-  const [openDeletConfirmation, setOpenDeleteConfirmation] = useState(false);
-  const [openConfigDialog, setOpenConfigDialog] = useState(false);
-  const [configDialogData, setConfigDialogData] = useState({ open: false })
+  const [configDialogData, setConfigDialogData] = useState({ open: false });
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -78,48 +100,45 @@ function App() {
         dragHandle: ".custom-drag-handle",
         selectable: true,
         data: {
+          name: "",
           inputHandleId: uuidv4(),
           openConfig: openConfig,
-          openDeleteNode: openDeleteNode,
         },
       };
 
       switch (type) {
-        case "extension":
+        case "Extension":
           node = {
             ...node,
             data: {
               ...node.data,
-              name: "",
               extensionContentHandleId: uuidv4(),
               nextExtensionHandleId: uuidv4(),
             },
           };
           break;
-
-        case "singleCondition":
+        case "Condition":
           node = {
             ...node,
             data: {
               ...node.data,
-              field: "",
-              expression: "",
+              logic: { conditions: [{ field: "", expression: "" }] },
+              logicType: "singleCondition",
               matchHandleId: uuidv4(),
               noMatchHandleId: uuidv4(),
             },
           };
           break;
-
-        case "action":
+        case "Action":
           node = {
             ...node,
             data: {
               ...node.data,
+              actions: [{ application: "", data: "" }],
               outputHandleId: uuidv4(),
             },
           };
           break;
-
         case "ivrMenu":
           node = {
             ...node,
@@ -137,177 +156,128 @@ function App() {
         default:
           break;
       }
-      setNodes((nds) => nds.concat(node));
+      setNodes((nodes) => nodes.concat(node));
     },
     [reactFlowInstance, setNodes]
   );
 
   // trigger on nodes connection
-  const onConnect = useCallback((params) => {
-    setEdges((eds) =>
-      addEdge(
-        {
-          ...params,
-          id: uuidv4(),
-          type: "smoothstep",
-
-          data: {
-            askDeleteEdge: askDeleteEdge,
+  const onConnect = useCallback(
+    (params) => {
+      setEdges((edges) =>
+        addEdge(
+          {
+            ...params,
+            id: uuidv4(),
+            data: {},
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+              color: "black",
+              height: 20,
+              width: 50,
+            },
           },
-          markerEnd: {
-            type: MarkerType.ArrowClosed,
-            color: "black",
-            height: 20,
-            width: 50,
-          },
-        },
-        eds
-      )
-    );
-  }, [setEdges]);
-
-  //Node and Edges Deletion
-  const openDeleteNode = (id) => {
-    setDeleteType("node");
-    setDeleteTargetId(id);
-    setOpenDeleteConfirmation(true);
-  };
-
-  const deleteNode = (id) => {
-    setNodes((nds) => nds.filter((node) => node.id !== id));
-    //delete related edges to avoid zombie edges
-    setEdges((eds) =>
-      eds.filter((edge) => edge.source !== id && edge.target !== id)
-    );
-  };
-
-  const askDeleteEdge = (edgeId) => {
-    setDeleteType("edge");
-    setDeleteTargetId(edgeId);
-    setOpenDeleteConfirmation(true);
-  };
-
-  const deleteEdge = (id) => {
-    setEdges((eds) => eds.filter((edge) => edge.id !== id));
-  };
-
+          edges
+        )
+      );
+    },
+    [setEdges]
+  );
 
   //configuration
   function openConfig(id, type) {
     const indexOfNode = reactFlowInstance
       .getNodes()
       .findIndex((node) => node.id === id);
-
     setConfigDialogData({
       open: true,
       nodeId: id,
       nodeType: type,
       nodeIndex: indexOfNode,
-      nodeData: reactFlowInstance.getNodes()[indexOfNode].data
-    })
+      nodeData: reactFlowInstance.getNodes()[indexOfNode].data,
+    });
+  }
+
+  function closeConfig() {
+    setConfigDialogData({ ...configDialogData, open: false });
   }
 
   function saveConfigChanges(data) {
-    console.log(data)
     switch (data.nodeType) {
-      case "extension":
+      case "Extension":
         setNodes(
           produce(reactFlowInstance.getNodes(), (draft) => {
             draft[data.nodeIndex].data.name = data.name;
           })
         );
-        setConfigDialogData({ open: false })
-        return;
-      case "condition":
+        break;
+      case "Condition":
         setNodes(
           produce(reactFlowInstance.getNodes(), (draft) => {
-            draft[data.nodeIndex].data.field = data.field;
-            draft[data.nodeIndex].data.expression = data.expression;
+            draft[data.nodeIndex].data.name = data.name;
+            draft[data.nodeIndex].data.logic = data.logic;
+            draft[data.nodeIndex].data.logicType = data.logicType;
           })
         );
-        setConfigDialogData({ open: false })
-        return;
+        break;
+      case "Action":
+        setNodes(
+          produce(reactFlowInstance.getNodes(), (draft) => {
+            draft[data.nodeIndex].data.name = data.name;
+            draft[data.nodeIndex].data.actions = data.actions;
+          })
+        );
+        break;
       default:
-        setConfigDialogData({ open: false })
+        closeConfig();
     }
+    closeConfig();
   }
 
-  const saveConditionNodeChanges = (data) => {
-    setNodes(
-      produce(reactFlowInstance.getNodes(), (draft) => {
-        draft[configDialogData.nodeIndex].data.name = data.name;
-        draft[configDialogData.nodeIndex].data.logic = data.logic;
-      })
-    );
-  };
-
-  const saveActionNodeChanges = (data) => {
-    setNodes(
-      produce(reactFlowInstance.getNodes(), (draft) => {
-        draft[configDialogData.nodeIndex].data.name = data.name;
-      })
-    );
-  };
-
   return (
-    <Container disableGutters maxWidth={false}>
-      <Delete
-        id={deleteTargetId}
-        deleteType={deleteType}
-        open={openDeletConfirmation}
-        yes={() => {
-          switch (deleteType) {
-            case "node":
-              deleteNode(deleteTargetId);
-              break;
-            case "edge":
-              deleteEdge(deleteTargetId);
-              break;
-            default:
-              break;
-          }
-          setOpenDeleteConfirmation(false);
-          if (openConfigDialog) setOpenConfigDialog(false);
-        }}
-        no={() => {
-          setOpenDeleteConfirmation(false);
-        }}
-      />
-      <Configuration
-        open={configDialogData.open}
-        close={() => {
-          setConfigDialogData({ open: false })
-        }}
-        data={configDialogData}
-        save={saveConfigChanges}
-        saveConditionNodeChanges={saveConditionNodeChanges}
-      />
-
-      <ReactFlowProvider>
-        <div
-          ref={reactFlowWrapper}
-          style={{ height: "100vh", width: '100vw', paddingTop: "64px" }}
-        >
-          <ReactFlow
-            nodeTypes={nodeTypes}
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            onInit={setReactFlowInstance}
-            onDrop={onDrop}
-            onDragOver={onDragOver}
-            deleteKeyCode="Delete"
-            selectionKeyCode="Shift"
-            multiSelectionKeyCode={"Control"}
-          >
-            <Controls />
-          </ReactFlow>
-        </div>
-      </ReactFlowProvider>
-      <AppBarAndNodesDrawer />
-    </Container>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <SnackbarProvider>
+        <AppBarAndNodesDrawer
+          export={() => {
+            console.log("nodes : ", nodes);
+            console.log("edgfes : ", edges);
+          }}
+        />
+        <Configuration
+          open={configDialogData.open}
+          close={closeConfig}
+          data={configDialogData}
+          save={saveConfigChanges}
+        />
+        <Container disableGutters maxWidth={false}>
+          <ReactFlowProvider>
+            <div
+              ref={reactFlowWrapper}
+              style={{ height: "100vh", width: "100vw", paddingTop: "64px" }}
+            >
+              <ReactFlow
+                nodeTypes={nodeTypes}
+                nodes={nodes}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onConnect={onConnect}
+                onInit={setReactFlowInstance}
+                onDrop={onDrop}
+                onDragOver={onDragOver}
+                deleteKeyCode="Delete"
+                selectionKeyCode="Shift"
+                multiSelectionKeyCode={"Control"}
+                onlyRenderVisibleElements={true}
+              >
+                <Controls />
+              </ReactFlow>
+            </div>
+          </ReactFlowProvider>
+        </Container>
+      </SnackbarProvider>
+    </ThemeProvider>
   );
 }
 

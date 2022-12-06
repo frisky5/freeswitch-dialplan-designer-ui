@@ -8,7 +8,8 @@ import {
   Typography,
 } from "@mui/material";
 import Extension from "./contents/Extension";
-import SingleCondtion from "./contents/SingleCondition";
+import Condition from "./contents/Condition";
+import Action from "./contents/Actions";
 
 export default function Configuration(props) {
   const [disable, setDisable] = useState(false);
@@ -17,61 +18,81 @@ export default function Configuration(props) {
 
   function selectConfigType() {
     switch (props.data.nodeType) {
-      case "extension":
-        return <Extension
-          triggerSave={triggerSave}
-          data={props.data}
-          save={(data) => {
-            props.save(data);
-            setTriggerSave(false);
-          }}
-          cancelSave={() => { setTriggerSave(false) }}
-        />
-      case "singleCondition":
-        return <SingleCondtion
-          triggerSave={triggerSave}
-          data={props.data}
-          save={(data) => {
-            props.save(data);
-            setTriggerSave(false);
-          }}
-          cancelSave={() => { setTriggerSave(false) }}
-        />
-
-      default: return null
+      case "Extension":
+        return (
+          <Extension
+            triggerSave={triggerSave}
+            data={props.data}
+            save={(data) => {
+              props.save(data);
+              setTriggerSave(false);
+            }}
+            cancelSave={() => {
+              setTriggerSave(false);
+            }}
+          />
+        );
+      case "Condition":
+        return (
+          <Condition
+            triggerSave={triggerSave}
+            data={props.data}
+            save={(data) => {
+              props.save(data);
+              setTriggerSave(false);
+            }}
+            cancelSave={() => {
+              setTriggerSave(false);
+            }}
+          />
+        );
+      case "Action":
+        return (
+          <Action
+            triggerSave={triggerSave}
+            data={props.data}
+            save={(data) => {
+              props.save(data);
+              setTriggerSave(false);
+            }}
+            cancelSave={() => {
+              setTriggerSave(false);
+            }}
+          />
+        );
+      default:
+        return null;
     }
   }
 
   return (
-    <Dialog
-      open={props.open}
-      fullWidth
-      maxWidth={props.type === "extension" ? "sm" : "xl"}
-    >
-      <DialogTitle>Configuration</DialogTitle>
-      <DialogContent>
-        {selectConfigType()}
-      </DialogContent>
+    <Dialog open={props.open} maxWidth={"md"} fullWidth>
+      <DialogTitle>
+        <Typography align="center">
+          {"Configuration of " + props.data.nodeType}
+        </Typography>
+      </DialogTitle>
+      <DialogContent>{selectConfigType()}</DialogContent>
       <DialogActions>
         <Button
-          variant="text"
+          variant="contained"
           disabled={disable}
           color="primary"
           onClick={() => {
             setTriggerSave(true);
           }}
         >
-          save
+          Save
         </Button>
         <Button
-          variant="text"
+          variant="contained"
           disabled={disable}
-          color="secondary"
+          color="warning"
           onClick={() => {
             props.close();
           }}
         >
-          cancel
+          Cancel
         </Button>
       </DialogActions>
     </Dialog>
