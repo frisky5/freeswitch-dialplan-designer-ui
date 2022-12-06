@@ -1,10 +1,11 @@
 import React, { useCallback, useRef, useState } from "react";
-import { CssBaseline, LinearProgress } from "@mui/material";
+import { Container, CssBaseline, LinearProgress } from "@mui/material";
 import produce from "immer";
 
 import ReactFlow, {
   addEdge,
   Controls,
+  MarkerType,
   ReactFlowProvider,
   useEdgesState,
   useNodesState,
@@ -12,16 +13,15 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 
 import { v4 as uuidv4 } from "uuid";
-import DeleteDialog from "./components/dialogs/DeleteDialog";
-import NodesSidebar from "./components/NodesSidebar";
-import EdgeWithDeleteButton from "./edges/EdgeWithDeleteButton";
+import Delete from "./components/dialogs/Delete";
 import "./index.css";
 import Action from "./nodes/Action";
 import SingleCondition from "./nodes/SingleCondtion";
 import Extension from "./nodes/Extension";
 import IvrMenu from "./nodes/IvrMenu";
 import Start from "./nodes/Start";
-import ConfigurationDialog from "./components/dialogs/ConfigurationDialog";
+import Configuration from "./components/dialogs/Configuration";
+import AppBarAndNodesDrawer from "./components/AppBarAndNodesDrawer";
 
 const nodeTypes = {
   start: Start,
@@ -31,9 +31,6 @@ const nodeTypes = {
   ivrMenu: IvrMenu,
 };
 
-const edgeTypes = {
-  edgeWithDeleteButton: EdgeWithDeleteButton,
-};
 
 function App() {
   const reactFlowWrapper = useRef(null);
@@ -45,7 +42,7 @@ function App() {
       type: "start",
       draggable: false,
       selectable: false,
-      position: { x: 0, y: 0 },
+      position: { x: 15, y: 20 },
       data: { handleId: uuidv4() },
     },
   ]);
@@ -152,17 +149,16 @@ function App() {
         {
           ...params,
           id: uuidv4(),
-          type: "edgeWithDeleteButton",
-          selected: false,
-          markerEnd: {
-            height: "20px",
-            width: "20px",
-            type: "arrow",
-            color: "black",
-            orient: 0,
-          },
+          type: "smoothstep",
+
           data: {
             askDeleteEdge: askDeleteEdge,
+          },
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: "black",
+            height: 20,
+            width: 50,
           },
         },
         eds
@@ -194,6 +190,7 @@ function App() {
   const deleteEdge = (id) => {
     setEdges((eds) => eds.filter((edge) => edge.id !== id));
   };
+
 
   //configuration
   function openConfig(id, type) {
@@ -253,9 +250,8 @@ function App() {
   };
 
   return (
-    <div className="dndflow">
-      <CssBaseline />
-      <DeleteDialog
+    <Container disableGutters maxWidth={false}>
+      <Delete
         id={deleteTargetId}
         deleteType={deleteType}
         open={openDeletConfirmation}
@@ -277,7 +273,7 @@ function App() {
           setOpenDeleteConfirmation(false);
         }}
       />
-      <ConfigurationDialog
+      <Configuration
         open={configDialogData.open}
         close={() => {
           setConfigDialogData({ open: false })
@@ -289,35 +285,29 @@ function App() {
 
       <ReactFlowProvider>
         <div
-          className="reactflow-wrapper"
           ref={reactFlowWrapper}
-          style={{ height: "99vh", width: "99vw" }}
+          style={{ height: "100vh", width: '100vw', paddingTop: "64px" }}
         >
-          {/* <LinearProgress /> */}
           <ReactFlow
             nodeTypes={nodeTypes}
             nodes={nodes}
             edges={edges}
-            edgeTypes={edgeTypes}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
             onInit={setReactFlowInstance}
             onDrop={onDrop}
             onDragOver={onDragOver}
+            deleteKeyCode="Delete"
+            selectionKeyCode="Shift"
+            multiSelectionKeyCode={"Control"}
           >
             <Controls />
           </ReactFlow>
         </div>
-        <NodesSidebar
-          export={() => {
-            console.log("nodes : ", nodes);
-            console.log("edges : ", edges);
-          }}
-        />
       </ReactFlowProvider>
-
-    </div>
+      <AppBarAndNodesDrawer />
+    </Container>
   );
 }
 

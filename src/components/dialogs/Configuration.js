@@ -7,10 +7,10 @@ import {
   DialogTitle,
   Typography,
 } from "@mui/material";
-import Extension from "./specifics/Extension";
-import SingleCondtion from "./specifics/SingleCondition";
+import Extension from "./contents/Extension";
+import SingleCondtion from "./contents/SingleCondition";
 
-export default function ConfigurationDialog(props) {
+export default function Configuration(props) {
   const [disable, setDisable] = useState(false);
   const [loading, setLoading] = useState(false);
   const [triggerSave, setTriggerSave] = useState(false);
