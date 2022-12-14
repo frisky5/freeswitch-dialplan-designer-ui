@@ -5,33 +5,47 @@ import {
   OutlinedInput,
   Button,
   Grid,
+  Box,
+  Divider,
 } from "@mui/material";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 
 export default function ConditionListItem(props) {
   return (
     <ListItem>
-      <Grid
-        container
-        justifyContent="space-evenly"
-        alignItems="center"
-        spacing={2}
+      <Box
+        sx={{
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          gap: "1rem",
+        }}
       >
-        {!props.isSinsgleCondition && (
-          <Grid item xs={1}>
-            <Button
-              color="secondary"
-              disabled={props.index === 0 && props.conditionsCount === 1}
-              startIcon={<RemoveCircleIcon />}
-              onClick={() => {
-                props.deleteCondition(props.index);
-              }}
-            >
-              {props.index}
-            </Button>
-          </Grid>
-        )}
-        <Grid item xs={12} sm={props.isSinsgleCondition ? 6 : 5}>
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "nopwrap",
+            justifyContent: "flex-start",
+            alignItems: "center",
+            alignContent: "stretch",
+            gap: "1rem",
+          }}
+        >
+          <Button
+            color="error"
+            disabled={
+              (props.index === 0 && props.conditionsCount === 1) ||
+              props.logicType === "single"
+            }
+            startIcon={<RemoveCircleIcon />}
+            onClick={() => {
+              props.deleteCondition(props.index);
+            }}
+          >
+            {props.index}
+          </Button>
           <FormControl fullWidth variant="outlined">
             <InputLabel htmlFor={"condition-field-" + props.index}>
               Field
@@ -46,8 +60,6 @@ export default function ConditionListItem(props) {
               }}
             />
           </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={props.isSinsgleCondition ? 6 : 5}>
           <FormControl fullWidth variant="outlined">
             <InputLabel htmlFor={"condition-expression-" + props.index}>
               Expression
@@ -62,8 +74,9 @@ export default function ConditionListItem(props) {
               }}
             />
           </FormControl>
-        </Grid>
-      </Grid>
+        </Box>
+        <Divider />
+      </Box>
     </ListItem>
   );
 }

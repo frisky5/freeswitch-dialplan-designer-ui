@@ -1,44 +1,55 @@
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import {
+  Button,
+  Divider,
   FormControl,
   InputLabel,
   ListItem,
   OutlinedInput,
-  Button,
-  Grid,
 } from "@mui/material";
-import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
+import { Box } from "@mui/system";
 
 export default function ActionListItem(props) {
   return (
     <ListItem>
-      <Grid
-        container
-        justifyContent="space-evenly"
-        alignItems="center"
-        spacing={2}
+      <Box
+        sx={{
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          gap: "1rem",
+        }}
       >
-        {!props.isSinsgleCondition && (
-          <Grid item xs={1}>
-            <Button
-              color="secondary"
-              disabled={props.index === 0 && props.conditionsCount === 1}
-              startIcon={<RemoveCircleIcon />}
-              onClick={() => {
-                props.deleteAction(props.index);
-              }}
-            >
-              {props.index}
-            </Button>
-          </Grid>
-        )}
-        <Grid item xs={12} sm={props.isSinsgleCondition ? 6 : 5}>
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "nopwrap",
+            justifyContent: "flex-start",
+            alignItems: "center",
+            alignContent: "stretch",
+            gap: "1rem",
+          }}
+        >
+          <Button
+            color="error"
+            disabled={props.index === 0 && props.actionsCount === 1}
+            startIcon={<RemoveCircleIcon />}
+            onClick={() => {
+              props.deleteAction(props.index);
+            }}
+            tabIndex={-1}
+          >
+            {props.index}
+          </Button>
           <FormControl fullWidth variant="outlined">
-            <InputLabel htmlFor={"condition-field-" + props.index}>
-              Field
+            <InputLabel htmlFor={"tsuki-aa-" + props.index}>
+              Application
             </InputLabel>
             <OutlinedInput
               label="Application"
-              id={"condition-field-" + props.index}
+              id={"tsuki-aa-" + props.index}
               error={props.application === ""}
               value={props.application}
               onChange={(event) => {
@@ -46,15 +57,11 @@ export default function ActionListItem(props) {
               }}
             />
           </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={props.isSinsgleCondition ? 6 : 5}>
           <FormControl fullWidth variant="outlined">
-            <InputLabel htmlFor={"condition-expression-" + props.index}>
-              Data
-            </InputLabel>
+            <InputLabel htmlFor={"tsuki-ad-" + props.index}>Data</InputLabel>
             <OutlinedInput
-              label="Expression"
-              id={"condition-expression-" + props.index}
+              label="Data"
+              id={"tsuki-ad-" + props.index}
               value={props.data}
               error={props.data === ""}
               onChange={(event) => {
@@ -62,8 +69,9 @@ export default function ActionListItem(props) {
               }}
             />
           </FormControl>
-        </Grid>
-      </Grid>
+        </Box>
+        <Divider></Divider>
+      </Box>
     </ListItem>
   );
 }

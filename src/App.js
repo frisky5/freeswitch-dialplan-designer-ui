@@ -17,8 +17,6 @@ import ReactFlow, {
   useNodesState,
 } from "reactflow";
 import "reactflow/dist/style.css";
-
-import { v4 as uuidv4 } from "uuid";
 import "./index.css";
 import Action from "./components/nodes/Action";
 import Condition from "./components/nodes/Condition";
@@ -64,16 +62,20 @@ function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState([
     {
       //first node in any dialplan flow, do not modify this
-      id: uuidv4(),
+      id: "-1",
       type: "Start",
       draggable: false,
       selectable: false,
-      position: { x: 15, y: 20 },
-      data: { handleId: uuidv4() },
+      position: { x: 25, y: 25 },
+      data: { outputHID: "-1" },
     },
   ]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [configDialogData, setConfigDialogData] = useState({ open: false });
+
+  const [nodeIdCounter, setNodeIdCounter] = useState(0);
+  const [edgeIdCounter, setEdgeIdCounter] = useState(0);
+  const [handleIdCounter, setHandleIdCounter] = useState(0);
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -92,19 +94,20 @@ function App() {
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
       });
-
+      let tempHandleIdCounter = handleIdCounter;
       let node = {
-        id: uuidv4(),
+        id: nodeIdCounter.toString(),
         type,
         position,
         dragHandle: ".custom-drag-handle",
         selectable: true,
         data: {
           name: "",
-          inputHandleId: uuidv4(),
+          inputHID: (++tempHandleIdCounter).toString(),
           openConfig: openConfig,
         },
       };
+      setNodeIdCounter(nodeIdCounter + 1);
 
       switch (type) {
         case "Extension":
@@ -112,63 +115,86 @@ function App() {
             ...node,
             data: {
               ...node.data,
-              extensionContentHandleId: uuidv4(),
-              nextExtensionHandleId: uuidv4(),
+              extensionContentHID: (++tempHandleIdCounter).toString(),
+              nextExtensionHID: (++tempHandleIdCounter).toString(),
             },
           };
+          setHandleIdCounter(tempHandleIdCounter);
           break;
         case "Condition":
           node = {
             ...node,
             data: {
               ...node.data,
-              logic: { conditions: [{ field: "", expression: "" }] },
-              logicType: "singleCondition",
-              matchHandleId: uuidv4(),
-              noMatchHandleId: uuidv4(),
+              logic: {
+                type: "single",
+                conditions: [{ type: "", field: "", expression: "" }],
+              },
+              actionsHID: (++tempHandleIdCounter).toString(),
+              antiActionsHID: (++tempHandleIdCounter).toString(),
+              noMatchHID: (++tempHandleIdCounter).toString(),
             },
           };
+          setHandleIdCounter(tempHandleIdCounter);
           break;
         case "Action":
           node = {
             ...node,
             data: {
               ...node.data,
-              actions: [{ application: "", data: "" }],
-              outputHandleId: uuidv4(),
+              actions: [{ type: "", application: "", data: "" }],
+              outputHID: (++tempHandleIdCounter).toString(),
             },
           };
-          break;
-        case "ivrMenu":
-          node = {
-            ...node,
-            data: {
-              ...node.data,
-              noOfOutput: 0,
-              timeout: 0,
-              interDigitTimeout: 0,
-              maxFailure: 0,
-              digitLength: 0,
-            },
-          };
-
+          setHandleIdCounter(tempHandleIdCounter);
           break;
         default:
           break;
       }
       setNodes((nodes) => nodes.concat(node));
     },
-    [reactFlowInstance, setNodes]
+    [nodeIdCounter, openConfig, reactFlowInstance, setNodes, edges]
   );
 
   // trigger on nodes connection
   const onConnect = useCallback(
     (params) => {
+      console.log(params);
+
+      if (
+        edges.find((edge) => params.sourceHandle === edge.sourceHandle) != null
+      ) {
+        console.warn("Handle is already conencted with an edge");
+        return;
+      }
+
+      const source = nodes.find((node) => node.id === params.source);
+      const target = nodes.find((node) => node.id === params.target);
+
+      if (source.type === "Start" && target.type !== "Extension") return;
+      else if (source.type === "Extension") {
+        if (source.data.extensionContentHID === params.sourceHandle) {
+          if (target.type === "Extension") {
+            console.warn(
+              "Cannot Connect Content of Extension to another Extension, try a Condition or an Action"
+            );
+            return;
+          }
+        } else if (source.data.nextExtensionHID === params.sourceHandle) {
+          if (target.type !== "Extension") {
+            console.warn(
+              "Cannot conenct Next extension handle to aanything other that an Extension Node"
+            );
+            return;
+          }
+        }
+      }
+
       setEdges((edges) =>
         addEdge(
           {
             ...params,
-            id: uuidv4(),
+            id: edgeIdCounter.toString(),
             data: {},
             markerEnd: {
               type: MarkerType.ArrowClosed,
@@ -180,8 +206,9 @@ function App() {
           edges
         )
       );
+      setEdgeIdCounter(edgeIdCounter + 1);
     },
-    [setEdges]
+    [edges, edgeIdCounter, nodes]
   );
 
   //configuration
@@ -216,7 +243,6 @@ function App() {
           produce(reactFlowInstance.getNodes(), (draft) => {
             draft[data.nodeIndex].data.name = data.name;
             draft[data.nodeIndex].data.logic = data.logic;
-            draft[data.nodeIndex].data.logicType = data.logicType;
           })
         );
         break;
@@ -240,8 +266,14 @@ function App() {
       <SnackbarProvider>
         <AppBarAndNodesDrawer
           export={() => {
-            console.log("nodes : ", nodes);
-            console.log("edgfes : ", edges);
+            let temp = {
+              nodes: nodes,
+              edges: edges,
+              nodeIdCounter: nodeIdCounter,
+              edgeIdCounter: edgeIdCounter,
+              handleIdCounter: handleIdCounter,
+            };
+            console.log("EXPORT : ", JSON.stringify(temp, null, "\t"));
           }}
         />
         <Configuration
@@ -270,6 +302,7 @@ function App() {
                 selectionKeyCode="Shift"
                 multiSelectionKeyCode={"Control"}
                 onlyRenderVisibleElements={true}
+                snapToGrid={true}
               >
                 <Controls />
               </ReactFlow>

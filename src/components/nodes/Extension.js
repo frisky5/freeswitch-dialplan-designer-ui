@@ -1,11 +1,10 @@
 import React, { memo, useEffect } from "react";
 import { Box, IconButton, Tooltip, Typography } from "@mui/material";
-import { Handle, useUpdateNodeInternals, } from "reactflow";
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { Handle, useUpdateNodeInternals } from "reactflow";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 export default memo(({ id, type, data }) => {
-
   const updateNodeInternals = useUpdateNodeInternals();
 
   useEffect(() => {
@@ -13,26 +12,23 @@ export default memo(({ id, type, data }) => {
   }, []);
 
   return (
-    <div
-      className="default_node"
-      style={{ borderColor: "#3498db" }}
-    >
+    <div className="default_node" style={{ borderColor: "#3498db" }}>
       <Handle
-        id={data.inputHandleId}
+        id={data.inputHID}
         type="target"
         position="left"
         className={"red_left_handle"}
         style={{
           top: "55%",
-
-        }} />
+        }}
+      />
       <Tooltip title={data.name} arrow>
         <div
           className="custom-drag-handle"
           style={{
             borderBottom: "2px solid",
             borderColor: "inherit",
-            padding: 5
+            padding: 5,
           }}
         >
           <Typography align="center" variant="h6">
@@ -40,10 +36,19 @@ export default memo(({ id, type, data }) => {
           </Typography>
         </div>
       </Tooltip>
-      <Box style={{ paddingTop: 20, paddingBottom: 20, paddingLeft: 35, paddingRight: 35, display: "flex", justifyContent: "center" }}>
+      <Box
+        style={{
+          paddingTop: 20,
+          paddingBottom: 20,
+          paddingLeft: 35,
+          paddingRight: 35,
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
         <IconButton
           variant={"contained"}
-          style={{ background: "#2ecc71", color: 'white' }}
+          style={{ background: "#2ecc71", color: "white" }}
           onClick={() => {
             data.openConfig(id, type);
           }}
@@ -51,37 +56,26 @@ export default memo(({ id, type, data }) => {
           <EditIcon />
         </IconButton>
       </Box>
-      <Tooltip
-        title="Extension content"
-        arrow
-        disableInteractive
-      >
+      <Tooltip title="Content" arrow disableInteractive>
         <Handle
-          id={data.extensionContentHandleId}
+          id={data.extensionContentHID}
           position="right"
           className={"red_right_handle"}
           style={{
             top: "50%",
-
           }}
         />
       </Tooltip>
-      <Tooltip
-        title="Next Extension"
-        arrow
-        disableInteractive
-      >
+      <Tooltip title="Next Extension" arrow disableInteractive>
         <Handle
-          id={data.nextExtensionHandleId}
+          id={data.nextExtensionHID}
           position="right"
           className={"red_right_handle"}
           style={{
             top: "80%",
-
           }}
         />
       </Tooltip>
     </div>
-
   );
 });

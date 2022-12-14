@@ -16,7 +16,6 @@
   background-color: var(--react-flow-backgroundcolor);
 }
 
-
 .default_node {
   display: flex;
   flex-direction: column;
@@ -24,6 +23,8 @@
   background-color: whitesmoke;
   border-radius: 9px;
   border: 2px solid;
+  min-height: 125px;
+  max-height: 125px;
 }
 
 .red_left_handle {
@@ -56,7 +57,6 @@
 .react-flow__edge.selected > .react-flow__edge-path {
   stroke: red;
 }
-
 
 .react-flow__node.selected::before {
   content: "";
@@ -108,7 +108,6 @@
   -o-border-radius: 9px;
 }
 
-
 .right_handles_wrapper {
   height: 100%;
   right: 0;
@@ -118,8 +117,6 @@
   flex-direction: column;
   justify-content: space-between;
 }
-
-
 
 .react-flow__node-ivrMenu {
   width: 500px;
@@ -151,7 +148,6 @@
     max-width: 250px;
   }
 }
-
 
 @-webkit-keyframes yellow-shadow {
   0% {
@@ -247,54 +243,54 @@
 
 @-webkit-keyframes gradient-shadow {
   0% {
-    -webkit-box-shadow: 0 0 5px 3px #e74c3c,0 0 4px 2px #e74c3c;
-            box-shadow: 0 0 5px 3px #e74c3c,0 0 4px 2px #e74c3c;
+    -webkit-box-shadow: 0 0 5px 3px #e74c3c, 0 0 4px 2px #e74c3c;
+    box-shadow: 0 0 5px 3px #e74c3c, 0 0 4px 2px #e74c3c;
   }
   20% {
-    -webkit-box-shadow: 0 0 5px 3px #e74c3c,0 0 4px 2px #e74c3c;
-            box-shadow: 0 0 5px 3px #e74c3c,0 0 4px 2px #e74c3c;
+    -webkit-box-shadow: 0 0 5px 3px #e74c3c, 0 0 4px 2px #e74c3c;
+    box-shadow: 0 0 5px 3px #e74c3c, 0 0 4px 2px #e74c3c;
   }
   40% {
-    -webkit-box-shadow: 0 0 5px 3px #e74c3c,0 0 4px 2px #e74c3c;
-            box-shadow: 0 0 5px 3px #e74c3c,0 0 4px 2px #e74c3c;
+    -webkit-box-shadow: 0 0 5px 3px #e74c3c, 0 0 4px 2px #e74c3c;
+    box-shadow: 0 0 5px 3px #e74c3c, 0 0 4px 2px #e74c3c;
   }
   60% {
-    -webkit-box-shadow: 0 0 5px 3px #e74c3c,0 0 4px 2px #e74c3c;
-            box-shadow: 0 0 5px 3px #e74c3c,0 0 4px 2px #e74c3c;
+    -webkit-box-shadow: 0 0 5px 3px #e74c3c, 0 0 4px 2px #e74c3c;
+    box-shadow: 0 0 5px 3px #e74c3c, 0 0 4px 2px #e74c3c;
   }
   80% {
-    -webkit-box-shadow: 0 0 5px 3px #f00,0 0 4px 2px #f00;
-            box-shadow: 0 0 5px 3px #f00,0 0 4px 2px #f00;
+    -webkit-box-shadow: 0 0 5px 3px #f00, 0 0 4px 2px #f00;
+    box-shadow: 0 0 5px 3px #f00, 0 0 4px 2px #f00;
   }
   100% {
-    -webkit-box-shadow: 0 0 5px 3px #e74c3c,0 0 4px 2px #e74c3c;
-            box-shadow: 0 0 5px 3px #e74c3c,0 0 4px 2px #e74c3c;
+    -webkit-box-shadow: 0 0 5px 3px #e74c3c, 0 0 4px 2px #e74c3c;
+    box-shadow: 0 0 5px 3px #e74c3c, 0 0 4px 2px #e74c3c;
   }
 }
 
 @keyframes gradient-shadow {
   0% {
-    -webkit-box-shadow: 0 0 5px 3px #e74c3c,0 0 4px 2px #e74c3c;
-            box-shadow: 0 0 5px 3px #e74c3c,0 0 4px 2px #e74c3c;
+    -webkit-box-shadow: 0 0 5px 3px #e74c3c, 0 0 4px 2px #e74c3c;
+    box-shadow: 0 0 5px 3px #e74c3c, 0 0 4px 2px #e74c3c;
   }
   20% {
-    -webkit-box-shadow: 0 0 5px 3px #e74c3c,0 0 4px 2px #e74c3c;
-            box-shadow: 0 0 5px 3px #e74c3c,0 0 4px 2px #e74c3c;
+    -webkit-box-shadow: 0 0 5px 3px #e74c3c, 0 0 4px 2px #e74c3c;
+    box-shadow: 0 0 5px 3px #e74c3c, 0 0 4px 2px #e74c3c;
   }
   40% {
-    -webkit-box-shadow: 0 0 5px 3px #e74c3c,0 0 4px 2px #e74c3c;
-            box-shadow: 0 0 5px 3px #e74c3c,0 0 4px 2px #e74c3c;
+    -webkit-box-shadow: 0 0 5px 3px #e74c3c, 0 0 4px 2px #e74c3c;
+    box-shadow: 0 0 5px 3px #e74c3c, 0 0 4px 2px #e74c3c;
   }
   60% {
-    -webkit-box-shadow: 0 0 5px 3px #e74c3c,0 0 4px 2px #e74c3c;
-            box-shadow: 0 0 5px 3px #e74c3c,0 0 4px 2px #e74c3c;
+    -webkit-box-shadow: 0 0 5px 3px #e74c3c, 0 0 4px 2px #e74c3c;
+    box-shadow: 0 0 5px 3px #e74c3c, 0 0 4px 2px #e74c3c;
   }
   80% {
-    -webkit-box-shadow: 0 0 5px 3px #f00,0 0 4px 2px #f00;
-            box-shadow: 0 0 5px 3px #f00,0 0 4px 2px #f00;
+    -webkit-box-shadow: 0 0 5px 3px #f00, 0 0 4px 2px #f00;
+    box-shadow: 0 0 5px 3px #f00, 0 0 4px 2px #f00;
   }
   100% {
-    -webkit-box-shadow: 0 0 5px 3px #e74c3c,0 0 4px 2px #e74c3c;
-            box-shadow: 0 0 5px 3px #e74c3c,0 0 4px 2px #e74c3c;
+    -webkit-box-shadow: 0 0 5px 3px #e74c3c, 0 0 4px 2px #e74c3c;
+    box-shadow: 0 0 5px 3px #e74c3c, 0 0 4px 2px #e74c3c;
   }
 }

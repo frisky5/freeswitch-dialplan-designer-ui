@@ -66,7 +66,7 @@ export default function Configuration(props) {
   }
 
   return (
-    <Dialog open={props.open} maxWidth={"md"} fullWidth>
+    <Dialog open={props.open} maxWidth={"xl"} fullWidth>
       <DialogTitle>
         <Typography align="center">
           {"Configuration of " + props.data.nodeType}
@@ -87,7 +87,7 @@ export default function Configuration(props) {
         <Button
           variant="contained"
           disabled={disable}
-          color="warning"
+          color="error"
           onClick={() => {
             props.close();
           }}

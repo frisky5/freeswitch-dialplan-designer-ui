@@ -3,7 +3,6 @@ import { Box } from "@mui/system";
 import React, { memo } from "react";
 import { Handle } from "reactflow";
 
-
 export default memo(({ data, isConnectable }) => {
   return (
     <div
@@ -16,6 +15,8 @@ export default memo(({ data, isConnectable }) => {
         borderColor: "#27ae60",
         alignItems: "center",
         justifyContent: "center",
+        minHeight: "50px",
+        maxHeight: "50px",
       }}
     >
       <Handle
@@ -24,11 +25,19 @@ export default memo(({ data, isConnectable }) => {
         position="right"
         isConnectable={isConnectable}
         className={"red_right_handle"}
-        style={{
-
-        }}
+        style={{}}
       />
-      <Typography align="center" variant="h6" style={{ color: "white", paddingTop: 8, paddingBottom: 8, paddingLeft: 25, paddingRight: 25 }}>
+      <Typography
+        align="center"
+        variant="h6"
+        style={{
+          color: "white",
+          paddingTop: 8,
+          paddingBottom: 8,
+          paddingLeft: 25,
+          paddingRight: 25,
+        }}
+      >
         START
       </Typography>
     </div>

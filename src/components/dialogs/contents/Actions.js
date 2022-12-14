@@ -10,6 +10,8 @@ import {
   OutlinedInput,
   Grid,
   Tooltip,
+  Button,
+  Pagination,
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 
@@ -21,6 +23,9 @@ export default function Action(props) {
   const { enqueueSnackbar } = useSnackbar();
   const [name, setName] = useState(props.data.nodeData.name);
   const [actions, setActions] = useState(props.data.nodeData.actions);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const [actionsPositions, setActionsPosition] = useState([0, 5]);
 
   const modifyApplication = useCallback(
     (index, data) => {
@@ -47,7 +52,7 @@ export default function Action(props) {
   const addAction = useCallback(() => {
     setActions(
       produce(actions, (draft) => {
-        draft.push({ field: "", expression: "" });
+        draft.push({ application: "", data: "" });
       })
     );
   }, [actions]);
@@ -69,7 +74,7 @@ export default function Action(props) {
       });
 
       if (error) {
-        enqueueSnackbar("Application box is empty", {
+        enqueueSnackbar("Application is empty", {
           variant: "error",
         });
         props.cancelSave();
@@ -105,25 +110,36 @@ export default function Action(props) {
 
         <Grid item xs={12}>
           <Divider>
-            <Typography variant="overline">Logic Conditions</Typography>
+            <Button
+              onClick={addAction}
+              variant={"contained"}
+              endIcon={<AddCircleIcon />}
+              tabIndex={-1}
+            >
+              Add Action
+            </Button>
           </Divider>
         </Grid>
-        <Grid item xs={12}>
-          <List style={{ minWidth: "100%" }}>
-            {actions.map((action, index) => (
-              <ActionListItem
-                key={index}
-                index={index}
-                application={action.application}
-                data={action.data}
-                modifyApplication={modifyApplication}
-                modifyData={modifyData}
-                deleteAction={deleteAction}
-              />
-            ))}
+        <Grid item xs={12} style={{ minHeight: "480px" }}>
+          <List style={{ minWidth: "100%" }} id="actions-list">
+            {actions.map((action, index) => {
+              if (index >= actionsPositions[0] && index < actionsPositions[1])
+                return (
+                  <ActionListItem
+                    key={index}
+                    index={index}
+                    application={action.application}
+                    data={action.data}
+                    modifyApplication={modifyApplication}
+                    modifyData={modifyData}
+                    deleteAction={deleteAction}
+                    actionsCount={actions.length}
+                  />
+                );
+              else return null;
+            })}
           </List>
         </Grid>
-
         <Grid
           item
           xs={12}
@@ -138,16 +154,18 @@ export default function Action(props) {
             justifyContent: "center",
           }}
         >
-          <Tooltip title="Click to add action" arrow>
-            <IconButton
-              style={{
-                color: "#2ecc71",
-              }}
-              onClick={addAction}
-            >
-              <AddCircleIcon />
-            </IconButton>
-          </Tooltip>
+          <Pagination
+            color="primary"
+            count={Math.ceil(actions.length / pageSize)}
+            onChange={(e, v) => {
+              const var1 = (v - 1) * pageSize;
+              const var2 = v * pageSize;
+              setActionsPosition([var1, var2]);
+              setPage(v);
+            }}
+            showFirstButton
+            showLastButton
+          />
         </Grid>
       </Grid>
     </Box>
